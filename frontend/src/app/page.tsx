@@ -18,7 +18,7 @@ export default function Example() {
   return (
     <div className="bg-gray-900">
       <header className="absolute inset-x-0 top-0 z-50">
-        <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
+        <nav aria-label="Global" className="mx-4 mt-4 flex items-center justify-between p-4 lg:px-8 lg:py-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg">
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
@@ -39,22 +39,22 @@ export default function Example() {
               <Bars3Icon aria-hidden="true" className="size-6" />
             </button>
           </div>
-          <div className="hidden lg:flex lg:gap-x-12">
+          <div className="hidden lg:flex lg:gap-x-2">
             {navigation.map((item) => (
-              <Link key={item.name} href={item.href} className="text-sm/6 font-semibold text-white">
+              <Link key={item.name} href={item.href} className="px-4 py-2 text-sm font-semibold text-white/90 hover:text-white hover:bg-white/10 hover:backdrop-blur-sm rounded-xl transition-all duration-200 ease-in-out">
                 {item.name}
               </Link>
             ))}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link href="#" className="text-sm/6 font-semibold text-white">
+            <Link href="#" className="px-6 py-2.5 text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 rounded-xl backdrop-blur-sm transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl">
               Log in <span aria-hidden="true">&rarr;</span>
             </Link>
           </div>
         </nav>
         <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
           <div className="fixed inset-0 z-50" />
-          <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900 p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-100/10">
+          <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900/80 backdrop-blur-xl border-l border-white/20 p-6 sm:max-w-sm">
             <div className="flex items-center justify-between">
               <Link href="/" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
@@ -75,12 +75,12 @@ export default function Example() {
             </div>
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-white/10">
-                <div className="space-y-2 py-6">
+                <div className="space-y-3 py-6">
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5"
+                      className="block rounded-xl px-4 py-3 text-base font-semibold text-white/90 hover:text-white hover:bg-white/10 hover:backdrop-blur-sm border border-transparent hover:border-white/20 transition-all duration-200 ease-in-out"
                     >
                       {item.name}
                     </Link>
@@ -89,7 +89,7 @@ export default function Example() {
                 <div className="py-6">
                   <Link
                     href="#"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-white hover:bg-white/5"
+                    className="block rounded-xl px-4 py-3 text-base font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 backdrop-blur-sm transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl"
                   >
                     Log in
                   </Link>
@@ -124,7 +124,7 @@ export default function Example() {
             </div>
           </div>
           <div className="text-center">
-            <h1 className="text-5xl font-semibold tracking-tight text-balance text-white sm:text-7xl">
+            <h1 className="text-5xl font-mono font-semibold tracking-tight text-balance text-white sm:text-7xl">
               Introducing the first ever decentralied Vector DB
             </h1>
             <p className="mt-8 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8">
