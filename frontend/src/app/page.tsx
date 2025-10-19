@@ -23,7 +23,7 @@ export default function Example() {
         <nav aria-label="Global" className="mt-6 flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg">
           <div className="flex gap-x-1">
             {navigation.map((item) => (
-              <Link key={item.name} href={item.href} className="px-4 py-2 text-sm font-semibold text-white/90 hover:text-white hover:bg-white/10 hover:backdrop-blur-sm rounded-full transition-all duration-200 ease-in-out">
+              <Link key={item.name} href={item.href} className="px-4 py-2 text-sm font-semibold text-white/50 hover:text-white rounded-full transition-all duration-200 ease-in-out">
                 {item.name}
               </Link>
             ))}
@@ -92,12 +92,12 @@ export default function Example() {
               </Link>
             </div>
           </div>
-          <div className="text-center">
+          <div className="text-center w-1/2 mx-auto">
             <h1 className="text-5xl font-mono font-semibold tracking-tight text-balance text-white sm:text-7xl">
-              Introducing the first ever decentralied Vector DB
+              Power Your AI Apps
             </h1>
             <p className="mt-8 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8">
-              Making AI more accessible, No vendor lock in, and cheaper.
+
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
