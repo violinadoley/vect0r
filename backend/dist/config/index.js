@@ -38,6 +38,10 @@ exports.config = {
         maxFileSize: process.env.MAX_FILE_SIZE || '50MB',
         uploadPath: process.env.UPLOAD_PATH || './uploads',
     },
+    // AI/ML Configuration
+    gemini: {
+        apiKey: process.env.GEMINI_API_KEY || '',
+    },
 };
 // Validate required configuration
 if (!exports.config.zg.privateKey && exports.config.nodeEnv !== 'development') {

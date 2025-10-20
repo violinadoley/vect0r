@@ -8,10 +8,12 @@ const cors_1 = __importDefault(require("@fastify/cors"));
 const config_1 = require("./config");
 const VectorEngine_1 = require("./core/VectorEngine");
 const EmbeddingService_1 = require("./services/EmbeddingService");
+const GeminiService_1 = require("./services/GeminiService");
 const Real0GStorageSDK_1 = require("./services/Real0GStorageSDK");
 const collections_1 = require("./routes/collections");
 const system_1 = require("./routes/system");
 const upload_1 = require("./routes/upload");
+const rag_1 = require("./routes/rag");
 /**
  * VectorZero - Decentralized Vector Database Server
  * Integrates 0G Storage and Chain for decentralized vector operations
@@ -33,6 +35,7 @@ class VectorZeroServer {
         // Initialize services
         this.vectorEngine = new VectorEngine_1.VectorEngine();
         this.embeddingService = new EmbeddingService_1.EmbeddingService();
+        this.geminiService = new GeminiService_1.GeminiService(config_1.config.gemini.apiKey);
         this.storageService = new Real0GStorageSDK_1.Real0GStorageSDK();
         this.setupMiddleware();
         this.setupRoutes();
@@ -71,6 +74,7 @@ class VectorZeroServer {
                     collections: '/api/v1/collections',
                     system: '/api/v1/health',
                     docs: '/api/v1/config',
+                    rag: '/api/v1/rag/query',
                 },
                 timestamp: new Date().toISOString(),
             });
@@ -84,6 +88,9 @@ class VectorZeroServer {
         }, { prefix: '/api/v1' });
         this.fastify.register(async (fastify) => {
             await (0, upload_1.uploadRoutes)(fastify, this.vectorEngine, this.embeddingService, this.storageService);
+        }, { prefix: '/api/v1' });
+        this.fastify.register(async (fastify) => {
+            await (0, rag_1.ragRoutes)(fastify, this.vectorEngine, this.embeddingService, this.geminiService);
         }, { prefix: '/api/v1' });
         // 404 handler
         this.fastify.setNotFoundHandler((request, reply) => {
@@ -99,6 +106,8 @@ class VectorZeroServer {
                     'POST /api/v1/collections/:id/search',
                     'POST /api/v1/upload',
                     'GET /api/v1/upload/info',
+                    'POST /api/v1/rag/query',
+                    'GET /api/v1/rag/status',
                 ],
             });
         });

@@ -3,11 +3,13 @@ import cors from '@fastify/cors';
 import { config } from './config';
 import { VectorEngine } from './core/VectorEngine';
 import { EmbeddingService } from './services/EmbeddingService';
+import { GeminiService } from './services/GeminiService';
 import { Real0GStorageSDK } from './services/Real0GStorageSDK';
 import { IStorageService } from './services/StorageInterface';
 import { collectionRoutes } from './routes/collections';
 import { systemRoutes } from './routes/system';
 import { uploadRoutes } from './routes/upload';
+import { ragRoutes } from './routes/rag';
 
 /**
  * VectorZero - Decentralized Vector Database Server
@@ -17,6 +19,7 @@ class VectorZeroServer {
   private fastify: any;
   private vectorEngine: VectorEngine;
   private embeddingService: EmbeddingService;
+  private geminiService: GeminiService;
   private storageService: IStorageService;
 
   constructor() {
@@ -36,6 +39,7 @@ class VectorZeroServer {
     // Initialize services
     this.vectorEngine = new VectorEngine();
     this.embeddingService = new EmbeddingService();
+    this.geminiService = new GeminiService(config.gemini.apiKey);
     this.storageService = new Real0GStorageSDK();
 
     this.setupMiddleware();
@@ -80,6 +84,7 @@ class VectorZeroServer {
           collections: '/api/v1/collections',
           system: '/api/v1/health',
           docs: '/api/v1/config',
+          rag: '/api/v1/rag/query',
         },
         timestamp: new Date().toISOString(),
       });
@@ -98,6 +103,10 @@ class VectorZeroServer {
       await uploadRoutes(fastify, this.vectorEngine, this.embeddingService, this.storageService);
     }, { prefix: '/api/v1' });
 
+    this.fastify.register(async (fastify: any) => {
+      await ragRoutes(fastify, this.vectorEngine, this.embeddingService, this.geminiService);
+    }, { prefix: '/api/v1' });
+
     // 404 handler
     this.fastify.setNotFoundHandler((request: any, reply: any) => {
       reply.status(404).send({
@@ -112,6 +121,8 @@ class VectorZeroServer {
           'POST /api/v1/collections/:id/search',
           'POST /api/v1/upload',
           'GET /api/v1/upload/info',
+          'POST /api/v1/rag/query',
+          'GET /api/v1/rag/status',
         ],
       });
     });

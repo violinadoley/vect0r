@@ -25,6 +25,9 @@ export declare const config: {
         maxFileSize: string;
         uploadPath: string;
     };
+    gemini: {
+        apiKey: string;
+    };
 };
 export default config;
 //# sourceMappingURL=index.d.ts.map

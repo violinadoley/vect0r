@@ -12,13 +12,15 @@ import {
   ExclamationTriangleIcon,
   ArrowUpTrayIcon,
   ServerIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline'
 
 const navigation = [
   { name: 'Overview', href: '#overview', icon: ChartBarIcon, current: true },
   { name: 'Upload', href: '#upload', icon: ArrowUpTrayIcon, current: false },
   { name: 'Collections', href: '#collections', icon: FolderIcon, current: false },
+  { name: 'RAG Demo', href: '#rag', icon: SparklesIcon, current: false },
   { name: 'Search', href: '#search', icon: MagnifyingGlassIcon, current: false },
   { name: 'Settings', href: '#settings', icon: CogIcon, current: false },
 ]
@@ -105,6 +107,18 @@ export default function AdminDashboard() {
   const [collectionVectors, setCollectionVectors] = useState<VectorDocument[]>([])
   const [vectorsLoading, setVectorsLoading] = useState(false)
   const [copiedText, setCopiedText] = useState<string | null>(null)
+  
+  // RAG Demo state
+  const [ragQuery, setRagQuery] = useState('')
+  const [ragLoading, setRagLoading] = useState(false)
+  const [ragAnswer, setRagAnswer] = useState<string | null>(null)
+  const [ragSources, setRagSources] = useState<any[]>([])
+  const [selectedRagCollection, setSelectedRagCollection] = useState<string>('')
+  const [ragProcessingTime, setRagProcessingTime] = useState<number>(0)
+  const [ragError, setRagError] = useState<string | null>(null)
+  const [expandedSource, setExpandedSource] = useState<number | null>(null)
+  const [ragProcessingStep, setRagProcessingStep] = useState<number>(0)
+  
   const [uploadConfig, setUploadConfig] = useState({
     chunkingStrategy: {
       type: 'sentence',
@@ -212,6 +226,65 @@ export default function AdminDashboard() {
     if (!hash) return 'N/A'
     if (hash.length <= startLen + endLen) return hash
     return `${hash.slice(0, startLen)}...${hash.slice(-endLen)}`
+  }
+
+  const handleRagQuery = async () => {
+    if (!ragQuery.trim() || !selectedRagCollection) {
+      setRagError('Please enter a question and select a collection')
+      return
+    }
+
+    setRagLoading(true)
+    setRagError(null)
+    setRagAnswer(null)
+    setRagSources([])
+    setRagProcessingStep(1) // Searching
+
+    try {
+      // Step 1: Searching
+      await new Promise(resolve => setTimeout(resolve, 300))
+      setRagProcessingStep(2) // Retrieved
+
+      const response = await axios.post(`${API_BASE_URL}/rag/query`, {
+        collectionId: selectedRagCollection,
+        query: ragQuery,
+        topK: 5,
+        includeMetadata: true
+      }, { timeout: 60000 })
+
+      // Step 3: Generating
+      setRagProcessingStep(3)
+
+      if (response.data.success) {
+        setRagAnswer(response.data.answer)
+        setRagSources(response.data.sources)
+        setRagProcessingTime(response.data.processingTime)
+        console.log('✅ RAG query successful:', response.data)
+      }
+    } catch (err: any) {
+      console.error('RAG query error:', err)
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to process query'
+      console.error('Error details:', err.response?.data)
+      setRagError(errorMessage)
+    } finally {
+      setRagLoading(false)
+      setRagProcessingStep(0)
+    }
+  }
+
+  const resetRagQuery = () => {
+    setRagQuery('')
+    setRagAnswer(null)
+    setRagSources([])
+    setRagError(null)
+    setRagProcessingTime(0)
+    setExpandedSource(null)
+  }
+
+  const getScoreColor = (score: number) => {
+    if (score > 0.8) return 'text-green-400 bg-green-400/20'
+    if (score > 0.6) return 'text-yellow-400 bg-yellow-400/20'
+    return 'text-orange-400 bg-orange-400/20'
   }
 
   const fetchStats = async () => {
@@ -1141,6 +1214,241 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                   </div>
+                )}
+              </div>
+            )}
+
+            {currentSection === 'rag' && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="rounded-xl bg-gradient-to-br from-purple-500/10 to-indigo-500/10 backdrop-blur-xl border border-purple-500/20 p-6">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold text-white mb-2 flex items-center space-x-2">
+                        <SparklesIcon className="h-7 w-7 text-purple-400" />
+                        <span>RAG Demo - AI-Powered Q&A</span>
+                      </h2>
+                      <p className="text-gray-300">
+                        Ask questions about your uploaded documents. The system retrieves relevant information 
+                        from your vector database and uses AI to generate accurate answers.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Collection Selector */}
+                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">1. Select Collection</h3>
+                  {collections.filter(c => c.count > 0).length === 0 ? (
+                    <div className="text-center py-8 text-gray-400">
+                      <FolderIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
+                      <p>No collections with vectors available</p>
+                      <p className="text-sm mt-2">Upload a document to create a collection with vectors</p>
+                      <button 
+                        onClick={() => setCurrentSection('upload')}
+                        className="mt-4 rounded-md bg-indigo-500 px-6 py-2 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors">
+                        Upload Documents
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {collections.filter(c => c.count > 0).map((collection) => (
+                        <button
+                          key={collection.id}
+                          onClick={() => setSelectedRagCollection(collection.id)}
+                          className={classNames(
+                            selectedRagCollection === collection.id
+                              ? 'bg-indigo-500/30 border-indigo-400'
+                              : 'bg-white/5 border-white/10 hover:bg-white/10',
+                            'rounded-lg border p-4 text-left transition-all'
+                          )}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <FolderIcon className="h-5 w-5 text-indigo-400" />
+                            {selectedRagCollection === collection.id && (
+                              <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                            )}
+                          </div>
+                          <h4 className="text-sm font-semibold text-white mb-1">{collection.name}</h4>
+                          <p className="text-xs text-gray-400">{collection.count} vectors</p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Query Input */}
+                {selectedRagCollection && (
+                  <>
+                    <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                      <h3 className="text-lg font-semibold text-white mb-4">2. Ask Your Question</h3>
+                      <textarea
+                        value={ragQuery}
+                        onChange={(e) => setRagQuery(e.target.value)}
+                        placeholder="E.g., What is this document about? Summarize the main points..."
+                        className="w-full h-32 rounded-md bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition-all resize-none"
+                        disabled={ragLoading}
+                      />
+                      <div className="mt-4 flex space-x-3">
+                        <button
+                          onClick={handleRagQuery}
+                          disabled={!ragQuery.trim() || ragLoading}
+                          className="flex-1 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-500 px-6 py-3 text-lg font-semibold text-white hover:from-purple-400 hover:to-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 disabled:hover:scale-100"
+                        >
+                          {ragLoading ? 'Processing...' : 'Ask Question'}
+                        </button>
+                        {(ragAnswer || ragError) && (
+                          <button
+                            onClick={resetRagQuery}
+                            className="rounded-lg bg-white/10 border border-white/20 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
+                          >
+                            Reset
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Processing Steps */}
+                    {ragLoading && (
+                      <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                        <div className="space-y-4">
+                          {[
+                            { step: 1, icon: '🔍', label: 'Searching vector database...', desc: 'Finding relevant document chunks' },
+                            { step: 2, icon: '📄', label: 'Retrieved relevant chunks', desc: `Found ${ragSources.length || 5} matching results` },
+                            { step: 3, icon: '🤖', label: 'Generating AI answer...', desc: 'Processing with Gemini AI' }
+                          ].map((item) => (
+                            <div
+                              key={item.step}
+                              className={classNames(
+                                'flex items-center space-x-4 p-4 rounded-lg transition-all',
+                                ragProcessingStep >= item.step
+                                  ? 'bg-indigo-500/20 border border-indigo-500/30'
+                                  : 'bg-white/5 border border-white/10 opacity-50'
+                              )}
+                            >
+                              <div className="text-3xl">{item.icon}</div>
+                              <div className="flex-1">
+                                <p className="text-white font-medium">{item.label}</p>
+                                <p className="text-sm text-gray-400">{item.desc}</p>
+                              </div>
+                              {ragProcessingStep === item.step && (
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-400"></div>
+                              )}
+                              {ragProcessingStep > item.step && (
+                                <CheckCircleIcon className="h-6 w-6 text-green-400" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Error Display */}
+                    {ragError && (
+                      <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-6">
+                        <div className="flex items-center space-x-3">
+                          <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+                          <div>
+                            <p className="text-red-400 font-medium">Error</p>
+                            <p className="text-red-300 text-sm">{ragError}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Answer Display */}
+                    {ragAnswer && (
+                      <>
+                        <div className="rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-6 shadow-2xl">
+                          <div className="flex items-start justify-between mb-4">
+                            <h3 className="text-xl font-bold text-white flex items-center space-x-2">
+                              <SparklesIcon className="h-6 w-6 text-purple-400" />
+                              <span>AI Answer</span>
+                            </h3>
+                            <button
+                              onClick={() => copyToClipboard(ragAnswer, 'answer')}
+                              className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+                            >
+                              {copiedText === 'answer' ? '✓ Copied' : 'Copy'}
+                            </button>
+                          </div>
+                          <div className="prose prose-invert max-w-none">
+                            <p className="text-gray-100 leading-relaxed whitespace-pre-wrap">{ragAnswer}</p>
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
+                            <span>Processed in {ragProcessingTime}ms</span>
+                            <span>{ragSources.length} sources used</span>
+                          </div>
+                        </div>
+
+                        {/* Sources Display */}
+                        {ragSources.length > 0 && (
+                          <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                            <h3 className="text-lg font-semibold text-white mb-4">
+                              Source Documents ({ragSources.length})
+                            </h3>
+                            <div className="space-y-3">
+                              {ragSources.map((source, index) => (
+                                <div
+                                  key={source.vectorId}
+                                  className="rounded-lg bg-white/5 border border-white/10 overflow-hidden hover:bg-white/10 transition-all"
+                                >
+                                  <button
+                                    onClick={() => setExpandedSource(expandedSource === index ? null : index)}
+                                    className="w-full p-4 text-left"
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center space-x-3 flex-1">
+                                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 text-sm font-bold">
+                                          {index + 1}
+                                        </div>
+                                        <div className="flex-1">
+                                          <p className="text-sm text-gray-400">
+                                            {source.metadata?.filename || 'Unknown source'}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center space-x-3">
+                                        <span className={classNames(
+                                          getScoreColor(source.score),
+                                          'px-3 py-1 rounded-full text-xs font-semibold'
+                                        )}>
+                                          {(source.score * 100).toFixed(1)}% match
+                                        </span>
+                                        <span className="text-gray-400">
+                                          {expandedSource === index ? '▼' : '▶'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </button>
+                                  
+                                  {expandedSource === index && (
+                                    <div className="px-4 pb-4 border-t border-white/10 pt-4">
+                                      <p className="text-sm text-gray-300 leading-relaxed mb-3">
+                                        {source.text}
+                                      </p>
+                                      {source.metadata && (
+                                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-400">
+                                          {source.metadata.chunkId && (
+                                            <div>
+                                              <span className="font-medium">Chunk ID:</span> {source.metadata.chunkId}
+                                            </div>
+                                          )}
+                                          <div>
+                                            <span className="font-medium">Vector ID:</span> {truncateHash(source.vectorId)}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </>
                 )}
               </div>
             )}
