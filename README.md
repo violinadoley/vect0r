@@ -1308,48 +1308,30 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) file for 
 
 ---
 
-## 📞 Contact & Support
 
-- **Documentation**: [Link to docs]
-- **Issues**: [GitHub Issues]
-- **Discord**: [Community Discord]
-- **Twitter**: [@Vect0r]
-
----
-
-## 🗺️ Roadmap
-
-### Q4 2024
-- ✅ Core vector database with HNSW indexing
+### Wave 4 - This is the first wave we have submitted to
+- ✅ HNSW vector indexing with 0G Storage integration
 - ✅ 0G Storage integration
 - ✅ Smart contract deployment
-- ✅ RAG implementation
+- ✅ Multi-format document processing with intelligent chunking
+- ✅ RESTful API and admin dashboard
 - ✅ Document processing pipeline
-
-### Q1 2025
-- [ ] Advanced filtering and metadata queries
-- [ ] Multi-model embedding support
-- [ ] Vector compression techniques
-- [ ] Enhanced monitoring and analytics
-- [ ] SDK for popular languages (Python, Go, Rust)
-
-### Q2 2025
-- [ ] Distributed vector engine (horizontal scaling)
-- [ ] Cross-chain bridges for multi-chain metadata
-- [ ] Enterprise SSO integration
-- [ ] Advanced security features (encryption at rest)
-- [ ] GraphQL API
-
-### Q3 2025
-- [ ] GPU-accelerated search
-- [ ] ML model hosting on 0G Compute
-- [ ] Advanced RAG strategies (HyDE, RAG-Fusion)
-- [ ] Multi-tenancy support
-- [ ] Marketplace for pre-indexed collections
+- ✅ RAG implementation with automatic embedding generation
 
 ---
 
-**Built with ❤️ for the 0G Network Hackathon**
+## Future Plans for 0G Labs 5th Wave Starting 25th October 2025
 
-*Vect0r - Where Decentralization Meets Vector Search*
+**Production-Ready Features:**
+- 🔄 Wallet and OAuth authentication with identity-based persistence
+- 🔄 Vect0r CLI for one-command local environment setup
+- 🔄 Performance optimization targeting sub-10ms latency
+- 🔄 Comprehensive benchmarking against Web2 vector databases
 
+**Research & Growth:**
+- 🔄 Technical whitepaper on decentralized vector database architecture
+- 🔄 Integration as a core component of 0G's AI infrastructure stack
+
+Beyond the buildathon, we aim to establish Vect0r as essential infrastructure in the 0G ecosystem, making AI truly public and censorship-resistant.
+
+---
