@@ -13,6 +13,34 @@ Vect0r is a decentralized vector database that combines Hierarchical Navigable S
 
 ---
 
+### Wave 4 - This is the first wave we have submitted to
+- ✅ HNSW vector indexing with 0G Storage integration
+- ✅ 0G Storage integration
+- ✅ Smart contract deployment
+- ✅ Multi-format document processing with intelligent chunking
+- ✅ RESTful API and admin dashboard
+- ✅ Document processing pipeline
+- ✅ RAG implementation with automatic embedding generation
+- ✅ RAG implementation returns responses in the Question-Answer area with tagging the specific chunks (truth grounding) from the stored collections which are used to answer the Question
+
+---
+
+## Future Plans for 0G Labs 5th Wave Starting 25th October 2025
+
+**Production-Ready Features:**
+- 🔄 Wallet and OAuth authentication with identity-based persistence
+- 🔄 Vect0r CLI for one-command local environment setup
+- 🔄 Performance optimization targeting sub-10ms latency
+- 🔄 Comprehensive benchmarking against Web2 vector databases
+
+**Research & Growth:**
+- 🔄 Technical whitepaper on decentralized vector database architecture
+- 🔄 Integration as a core component of 0G's AI infrastructure stack
+
+Beyond the buildathon, we aim to establish Vect0r as essential infrastructure in the 0G ecosystem, making AI truly public and censorship-resistant.
+
+---
+
 ## 📋 Table of Contents
 
 - [Overview](#overview)
@@ -1298,40 +1326,3 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) file for 
 
 ---
 
-## 🙏 Acknowledgments
-
-- **0G Network** - For providing decentralized storage and blockchain infrastructure
-- **OpenZeppelin** - For secure smart contract libraries
-- **Fastify** - For high-performance web framework
-- **hnswlib** - For efficient vector search implementation
-- **Google Gemini** - For embedding generation and RAG capabilities
-
----
-
-
-### Wave 4 - This is the first wave we have submitted to
-- ✅ HNSW vector indexing with 0G Storage integration
-- ✅ 0G Storage integration
-- ✅ Smart contract deployment
-- ✅ Multi-format document processing with intelligent chunking
-- ✅ RESTful API and admin dashboard
-- ✅ Document processing pipeline
-- ✅ RAG implementation with automatic embedding generation
-
----
-
-## Future Plans for 0G Labs 5th Wave Starting 25th October 2025
-
-**Production-Ready Features:**
-- 🔄 Wallet and OAuth authentication with identity-based persistence
-- 🔄 Vect0r CLI for one-command local environment setup
-- 🔄 Performance optimization targeting sub-10ms latency
-- 🔄 Comprehensive benchmarking against Web2 vector databases
-
-**Research & Growth:**
-- 🔄 Technical whitepaper on decentralized vector database architecture
-- 🔄 Integration as a core component of 0G's AI infrastructure stack
-
-Beyond the buildathon, we aim to establish Vect0r as essential infrastructure in the 0G ecosystem, making AI truly public and censorship-resistant.
-
----
