@@ -169,12 +169,8 @@ class VectorZeroServer {
       console.log(`🔗 0G Chain: ${config.zg.chainRpcUrl}`);
       console.log(`💾 0G Storage: ${config.zg.storageUrl}`);
       
-      // Create default collection for demo
-      const defaultCollectionId = await this.vectorEngine.createCollection('default', config.vector.dimension);
-      console.log(`📁 Created default collection: ${defaultCollectionId}`);
-
-      // Add some sample data for demo
-      await this.addSampleData(defaultCollectionId);
+      // Skip creating default collection - users will create their own through uploads
+      console.log(`📁 Ready to accept collection creation through uploads`);
 
       const address = await this.fastify.listen({
         port: config.port,
@@ -191,48 +187,6 @@ class VectorZeroServer {
     }
   }
 
-  private async addSampleData(collectionId: string): Promise<void> {
-    try {
-      console.log('📝 Adding sample documents...');
-      
-      const sampleDocuments = [
-        {
-          text: 'Artificial intelligence and machine learning are transforming the way we process and analyze data.',
-          metadata: { category: 'AI', type: 'definition' }
-        },
-        {
-          text: 'Blockchain technology provides decentralized and secure data storage solutions for modern applications.',
-          metadata: { category: 'Blockchain', type: 'definition' }
-        },
-        {
-          text: 'Vector databases enable efficient similarity search and semantic understanding of unstructured data.',
-          metadata: { category: 'Database', type: 'definition' }
-        },
-        {
-          text: 'Natural language processing helps computers understand and generate human language effectively.',
-          metadata: { category: 'NLP', type: 'definition' }
-        },
-        {
-          text: 'Distributed systems architecture ensures scalability and fault tolerance in large-scale applications.',
-          metadata: { category: 'Systems', type: 'definition' }
-        }
-      ];
-
-      for (const doc of sampleDocuments) {
-        const embedding = await this.embeddingService.generateEmbedding(doc.text);
-        await this.vectorEngine.insertVector(collectionId, embedding.vector, {
-          ...doc.metadata,
-          text: doc.text,
-          embeddingModel: embedding.model,
-          tokens: embedding.tokens,
-        });
-      }
-
-      console.log(`✅ Added ${sampleDocuments.length} sample documents`);
-    } catch (error) {
-      console.error('⚠️  Failed to add sample data:', error);
-    }
-  }
 }
 
 // Start the server

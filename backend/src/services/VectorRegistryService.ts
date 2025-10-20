@@ -41,6 +41,9 @@ export interface CollectionInfo {
   updatedAt: number;
   storageRoot: string;
   metadataHash: string;
+  txHash?: string;
+  blockNumber?: number;
+  blockHash?: string;
 }
 
 export interface VectorMetadataInfo {
@@ -192,7 +195,7 @@ export class VectorRegistryService {
   /**
    * Get collection information from the blockchain
    */
-  async getCollection(collectionId: string): Promise<CollectionInfo | null> {
+  async getCollection(collectionId: string, includeTxDetails: boolean = false): Promise<CollectionInfo | null> {
     if (!this.contract) {
       throw new Error('VectorRegistry contract not configured');
     }
@@ -205,7 +208,7 @@ export class VectorRegistryService {
         return null;
       }
 
-      return {
+      const collectionInfo: CollectionInfo = {
         name: result.name,
         description: result.description,
         dimension: Number(result.dimension),
@@ -217,8 +220,59 @@ export class VectorRegistryService {
         storageRoot: result.storageRoot,
         metadataHash: result.metadataHash
       };
+
+      // Optionally fetch transaction details
+      if (includeTxDetails) {
+        try {
+          const txDetails = await this.getCollectionTransactionDetails(collectionId);
+          if (txDetails) {
+            collectionInfo.txHash = txDetails.txHash;
+            collectionInfo.blockNumber = txDetails.blockNumber;
+            collectionInfo.blockHash = txDetails.blockHash;
+          }
+        } catch (err) {
+          console.warn('Could not fetch transaction details:', err);
+        }
+      }
+
+      return collectionInfo;
     } catch (error) {
       console.error('Error getting collection:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get transaction details for a collection by listening to past events
+   */
+  async getCollectionTransactionDetails(collectionId: string): Promise<{
+    txHash: string;
+    blockNumber: number;
+    blockHash: string;
+  } | null> {
+    if (!this.contract) {
+      return null;
+    }
+
+    try {
+      // Query for CollectionCreated events for this collection
+      const filter = this.contract.filters.CollectionCreated(collectionId);
+      const events = await this.contract.queryFilter(filter, -10000); // Last ~10k blocks
+
+      if (events.length > 0) {
+        const event = events[0]; // Get the first (creation) event
+        const block = await event.getBlock();
+        
+        return {
+          txHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+          blockHash: block.hash || ''
+        };
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error fetching transaction details:', error);
       return null;
     }
   }

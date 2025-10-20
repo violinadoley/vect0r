@@ -1,6 +1,6 @@
 /**
  * Storage Service Interface
- * Provides a unified interface for both Real0GStorageService and Real0GStorageSDK
+ * Provides a unified interface for 0G Storage implementations
  */
 
 export interface IStorageService {
@@ -11,6 +11,3 @@ export interface IStorageService {
   testConnection?(): Promise<boolean>;
   getNetworkStatus?(): Promise<any>;
 }
-
-// Type alias for backward compatibility
-export type Real0GStorageService = IStorageService;

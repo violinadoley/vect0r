@@ -43,6 +43,8 @@ export async function uploadRoutes(
    */
   fastify.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
+      console.log('📋 Upload request received');
+      
       // Check if request is multipart
       if (!(request as any).isMultipart()) {
         return reply.status(400).send({
@@ -108,12 +110,14 @@ export async function uploadRoutes(
       console.log(`📁 Processing upload: ${fileData.filename} (${fileData.size} bytes)`);
 
       // Process the document
+      console.log('🔄 Starting document processing...');
       const processedDoc = await documentProcessor.processDocument(
         fileData,
         uploadConfig.chunkingStrategy,
         uploadConfig.generateEmbeddings !== false, // Default to true
         uploadConfig.useZeroGCompute || false
       );
+      console.log(`✅ Document processing completed: ${processedDoc.chunks.length} chunks`);
 
       // Create or use existing collection
       let collectionId: string;
@@ -127,9 +131,8 @@ export async function uploadRoutes(
         
         collectionId = await vectorEngine.createCollection(
           collectionName,
-          768, // Default dimension
-          collectionDescription,
-          true // Public
+          processedDoc.chunks[0]?.embedding?.length || 768,
+          collectionDescription
         );
         
         console.log(`📋 Created new collection: ${collectionName} (${collectionId})`);
@@ -151,74 +154,63 @@ export async function uploadRoutes(
             message: `Collection ${collectionId} does not exist`
           });
         }
+        
+        console.log(`📋 Using existing collection: ${collectionId}`);
       }
 
-      // Insert chunks as vectors into the collection
-      let insertedVectors = 0;
+      // Store vectors in collection
       const vectorIds: string[] = [];
-
+      
       for (const chunk of processedDoc.chunks) {
         if (chunk.embedding) {
-          try {
-            const vectorId = await vectorEngine.insertVector(
-              collectionId,
-              chunk.embedding,
-              {
-                ...chunk.metadata,
-                documentId: processedDoc.id,
-                documentFilename: processedDoc.filename,
-                chunkId: chunk.id,
-                text: chunk.text,
-                chunkIndex: chunk.chunkIndex,
-                startIndex: chunk.startIndex,
-                endIndex: chunk.endIndex,
-                originalDocument: {
-                  filename: processedDoc.filename,
-                  size: processedDoc.originalSize,
-                  timestamp: processedDoc.timestamp,
-                  processingTime: processedDoc.processingTime
-                }
-              }
-            );
-            
-            vectorIds.push(vectorId);
-            insertedVectors++;
-          } catch (error) {
-            console.error(`Error inserting vector for chunk ${chunk.id}:`, error);
-          }
+          const vectorId = await vectorEngine.insertVector(
+            collectionId,
+            chunk.embedding,
+            {
+              text: chunk.text,
+              chunkId: chunk.id,
+              documentId: processedDoc.id,
+              filename: processedDoc.filename,
+              ...chunk.metadata
+            }
+          );
+          vectorIds.push(vectorId);
         }
       }
 
-      console.log(`✅ Uploaded and processed: ${insertedVectors}/${processedDoc.chunks.length} chunks inserted`);
-
-      // Return comprehensive response
-      reply.send({
+      // Prepare response
+      const response = {
         success: true,
+        message: `Document processed successfully`,
         document: {
           id: processedDoc.id,
           filename: processedDoc.filename,
           originalSize: processedDoc.originalSize,
-          textLength: processedDoc.textLength,
           processingTime: processedDoc.processingTime,
+          chunks: processedDoc.chunks.length,
+          textLength: processedDoc.textLength,
           storageMetadata: processedDoc.storageMetadata
         },
         collection: {
           id: collectionId,
-          name: uploadConfig.collectionName || `${fileData.filename}_collection`,
+          name: uploadConfig.collectionName || fileData.filename.replace(/\.[^/.]+$/, '') + '_collection',
           isNew: uploadConfig.createNewCollection !== false
         },
         processing: {
           chunkingStrategy: uploadConfig.chunkingStrategy,
           totalChunks: processedDoc.chunks.length,
-          insertedVectors,
+          insertedVectors: vectorIds.length,
           generatedEmbeddings: processedDoc.chunks.filter(c => c.embedding).length,
           usedZeroGCompute: uploadConfig.useZeroGCompute || false
         },
         vectors: {
           ids: vectorIds,
-          count: insertedVectors
+          count: vectorIds.length
         }
-      });
+      };
+
+      console.log(`✅ Upload completed: ${vectorIds.length} vectors stored in collection ${collectionId}`);
+      reply.send(response);
 
     } catch (error: any) {
       console.error('Error processing upload:', error);
@@ -259,94 +251,16 @@ export async function uploadRoutes(
               parameters: ['chunkSize', 'overlap']
             }
           },
-          examples: {
-            basicUpload: {
-              chunkingStrategy: {
-                type: 'sentence',
-                chunkSize: 1000,
-                overlap: 100
-              },
-              generateEmbeddings: true,
-              createNewCollection: true,
-              collectionName: 'My Document Collection'
-            },
-            advancedUpload: {
-              chunkingStrategy: {
-                type: 'semantic',
-                chunkSize: 1500,
-                overlap: 200,
-                metadata: {
-                  custom: 'value'
-                }
-              },
-              generateEmbeddings: true,
-              useZeroGCompute: true,
-              createNewCollection: false,
-              existingCollectionId: 'existing-collection-id'
-            }
+          limits: {
+            maxFileSize: '50MB',
+            maxFiles: 1,
+            supportedFormats: ['txt', 'pdf', 'docx', 'md', 'html', 'csv', 'json', 'xml']
           }
         }
       });
     } catch (error: any) {
       reply.status(500).send({
         error: 'Failed to get upload info',
-        message: error.message
-      });
-    }
-  });
-
-  /**
-   * Get processing status for a document
-   */
-  fastify.get('/upload/status/:documentId', async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      const { documentId } = request.params as { documentId: string };
-      
-      // In a real implementation, you'd track processing status
-      // For now, return a simple response
-      reply.send({
-        success: true,
-        status: 'completed', // In reality: 'processing', 'completed', 'failed'
-        documentId,
-        message: 'Document processing status tracking not yet implemented'
-      });
-    } catch (error: any) {
-      reply.status(500).send({
-        error: 'Failed to get processing status',
-        message: error.message
-      });
-    }
-  });
-
-  /**
-   * Validate chunking strategy
-   */
-  fastify.post('/upload/validate-strategy', async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      const { chunkingStrategy } = request.body as { chunkingStrategy: ChunkingStrategy };
-      
-      if (!chunkingStrategy) {
-        return reply.status(400).send({
-          error: 'Missing chunking strategy',
-          message: 'Please provide a chunking strategy to validate'
-        });
-      }
-
-      const isValid = DocumentProcessingService.validateChunkingStrategy(chunkingStrategy);
-      
-      reply.send({
-        success: true,
-        valid: isValid,
-        strategy: chunkingStrategy,
-        issues: isValid ? [] : [
-          chunkingStrategy.chunkSize <= 0 && 'chunkSize must be greater than 0',
-          chunkingStrategy.overlap < 0 && 'overlap must be non-negative',
-          chunkingStrategy.overlap >= chunkingStrategy.chunkSize && 'overlap must be less than chunkSize'
-        ].filter(Boolean)
-      });
-    } catch (error: any) {
-      reply.status(500).send({
-        error: 'Validation failed',
         message: error.message
       });
     }

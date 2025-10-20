@@ -7,16 +7,12 @@ import {
   FolderIcon,
   MagnifyingGlassIcon,
   CogIcon,
-  CodeBracketIcon,
   CloudIcon,
-  ServerIcon,
   DocumentTextIcon,
-  UsersIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-  CheckCircleIcon,
   ExclamationTriangleIcon,
-  ArrowUpTrayIcon
+  ArrowUpTrayIcon,
+  ServerIcon,
+  CheckCircleIcon
 } from '@heroicons/react/24/outline'
 
 const navigation = [
@@ -24,13 +20,14 @@ const navigation = [
   { name: 'Upload', href: '#upload', icon: ArrowUpTrayIcon, current: false },
   { name: 'Collections', href: '#collections', icon: FolderIcon, current: false },
   { name: 'Search', href: '#search', icon: MagnifyingGlassIcon, current: false },
-  { name: '0G Network', href: '#network', icon: CloudIcon, current: false },
   { name: 'Settings', href: '#settings', icon: CogIcon, current: false },
-  { name: 'Developer', href: '#developer', icon: CodeBracketIcon, current: false },
 ]
 
 // API configuration  
 const API_BASE_URL = 'http://localhost:3001/api/v1'
+
+// Target wallet address for filtering collections
+const TARGET_WALLET_ADDRESS = '0x24a00018F302Fa2fa523811Aec199D686d653Afc'
 
 interface Collection {
   id: string;
@@ -39,6 +36,19 @@ interface Collection {
   count: number;
   created: number;
   updated: number;
+  owner?: string;
+  txHash?: string;
+  blockNumber?: number;
+  blockHash?: string;
+  storageRoot?: string;
+  isPublic?: boolean;
+}
+
+interface VectorDocument {
+  id: string;
+  vector: number[];
+  metadata: Record<string, any>;
+  timestamp: number;
 }
 
 interface SystemStats {
@@ -91,6 +101,10 @@ export default function AdminDashboard() {
   const [uploadResult, setUploadResult] = useState<any>(null)
   const [dragActive, setDragActive] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null)
+  const [collectionVectors, setCollectionVectors] = useState<VectorDocument[]>([])
+  const [vectorsLoading, setVectorsLoading] = useState(false)
+  const [copiedText, setCopiedText] = useState<string | null>(null)
   const [uploadConfig, setUploadConfig] = useState({
     chunkingStrategy: {
       type: 'sentence',
@@ -107,13 +121,18 @@ export default function AdminDashboard() {
   // Fetch data on component mount
   useEffect(() => {
     fetchInitialData()
-    const interval = setInterval(fetchStats, 30000) // Refresh every 30 seconds
-    return () => clearInterval(interval)
+    // Remove frequent stats polling to prevent overwhelming backend
+    // const interval = setInterval(fetchStats, 30000) // Refresh every 30 seconds
+    // return () => clearInterval(interval)
   }, [])
 
   const fetchInitialData = async () => {
     setLoading(true)
     try {
+      // First, cleanup default collections
+      await cleanupDefaultCollections()
+      
+      // Then fetch data
       await Promise.all([
         fetchCollections(),
         fetchStats()
@@ -126,25 +145,84 @@ export default function AdminDashboard() {
     }
   }
 
+  const cleanupDefaultCollections = async () => {
+    try {
+      await axios.delete(`${API_BASE_URL}/collections/cleanup-defaults`)
+      console.log('✅ Cleaned up default collections')
+    } catch (err) {
+      console.warn('Could not cleanup default collections:', err)
+      // Don't block the UI if cleanup fails
+    }
+  }
+
   const fetchCollections = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/collections`)
       if (response.data.success) {
-        setCollections(response.data.collections)
+        // Further filter to show only collections owned by target wallet
+        // and exclude any remaining default collections
+        const filteredCollections = response.data.collections.filter((c: Collection) => {
+          // Exclude default named collections
+          if (c.name.toLowerCase() === 'default') return false
+          
+          // If owner info is available, filter by target wallet
+          // If not available, include all (MVP behavior)
+          if (c.owner) {
+            return c.owner.toLowerCase() === TARGET_WALLET_ADDRESS.toLowerCase()
+          }
+          
+          return true // Include collections without owner info
+        })
+        
+        setCollections(filteredCollections)
       }
     } catch (err) {
       console.error('Error fetching collections:', err)
     }
   }
 
+  const fetchCollectionVectors = async (collectionId: string) => {
+    setVectorsLoading(true)
+    try {
+      const response = await axios.get(`${API_BASE_URL}/collections/${collectionId}/vectors?limit=100`)
+      if (response.data.success) {
+        setCollectionVectors(response.data.vectors)
+      }
+    } catch (err) {
+      console.error('Error fetching vectors:', err)
+      setError('Failed to load vectors')
+    } finally {
+      setVectorsLoading(false)
+    }
+  }
+
+  const handleViewVectors = async (collection: Collection) => {
+    setSelectedCollection(collection)
+    setCurrentSection('vectors')
+    await fetchCollectionVectors(collection.id)
+  }
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedText(label)
+    setTimeout(() => setCopiedText(null), 2000)
+  }
+
+  const truncateHash = (hash: string, startLen = 6, endLen = 4) => {
+    if (!hash) return 'N/A'
+    if (hash.length <= startLen + endLen) return hash
+    return `${hash.slice(0, startLen)}...${hash.slice(-endLen)}`
+  }
+
   const fetchStats = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/stats`)
+      const response = await axios.get(`${API_BASE_URL}/stats`, { timeout: 10000 })
       if (response.data.success) {
         setSystemStats(response.data)
       }
     } catch (err) {
       console.error('Error fetching stats:', err)
+      setError('Failed to load system statistics')
     }
   }
 
@@ -172,6 +250,7 @@ export default function AdminDashboard() {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
+        timeout: 300000, // 5 minutes timeout for large files
         onUploadProgress: (progressEvent: any) => {
           const progress = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1))
           setUploadProgress(progress)
@@ -234,12 +313,6 @@ export default function AdminDashboard() {
         [field]: value
       }
     }))
-  }
-
-  const formatUptime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    return `${hours}h ${minutes}m`
   }
 
   const formatBytes = (bytes: number) => {
@@ -320,18 +393,7 @@ export default function AdminDashboard() {
               </nav>
             </div>
             
-            {/* 0G Network Status */}
-            <div className="flex-shrink-0 border-t border-white/10 p-4">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-white">0G Network</p>
-                  <p className="text-xs text-gray-400">Connected</p>
-              </div>
-              </div>
-            </div>
+            
           </div>
         </div>
 
@@ -378,90 +440,56 @@ export default function AdminDashboard() {
                   </div>
                 )}
 
-                {/* Stats */}
-                {systemStats && (
-                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="relative overflow-hidden rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 px-4 py-5 shadow">
-                      <dt className="truncate text-sm font-medium text-gray-400">Total Collections</dt>
-                      <dd className="mt-1 text-3xl font-semibold tracking-tight text-white">
-                        {systemStats.stats.vectors.local.collections}
-                      </dd>
-                      <div className="absolute bottom-0 right-0 p-3">
-                        <FolderIcon className="h-4 w-4 text-indigo-400" />
+                {/* Enhanced Search */}
+                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-6">Vector Search</h3>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div className="lg:col-span-2">
+                        <input
+                          type="text"
+                          placeholder="Search your vector database with natural language..."
+                          className="w-full rounded-md bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition-all"
+                        />
+                      </div>
+                      <div>
+                        <select className="w-full rounded-md bg-white/10 border border-white/20 px-4 py-3 text-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition-all">
+                          <option value="">All Collections</option>
+                          {collections.map((collection) => (
+                            <option key={collection.id} value={collection.id} className="bg-gray-800">
+                              {collection.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     
-                    <div className="relative overflow-hidden rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 px-4 py-5 shadow">
-                      <dt className="truncate text-sm font-medium text-gray-400">Total Vectors</dt>
-                      <dd className="mt-1 text-3xl font-semibold tracking-tight text-white">
-                        {systemStats.stats.vectors.local.totalVectors.toLocaleString()}
-                      </dd>
-                      <div className="absolute bottom-0 right-0 p-3">
-                        <DocumentTextIcon className="h-4 w-4 text-green-400" />
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Results Count</label>
+                        <select className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400/50">
+                          <option value="5" className="bg-gray-800">5 results</option>
+                          <option value="10" className="bg-gray-800">10 results</option>
+                          <option value="20" className="bg-gray-800">20 results</option>
+                          <option value="50" className="bg-gray-800">50 results</option>
+                        </select>
                       </div>
-                    </div>
-                    
-                    <div className="relative overflow-hidden rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 px-4 py-5 shadow">
-                      <dt className="truncate text-sm font-medium text-gray-400">Memory Usage</dt>
-                      <dd className="mt-1 text-3xl font-semibold tracking-tight text-white">
-                        {formatBytes(systemStats.stats.system.memory.heapUsed)}
-                      </dd>
-                      <div className="absolute bottom-0 right-0 p-3">
-                        <ServerIcon className="h-4 w-4 text-yellow-400" />
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-2">Search Type</label>
+                        <select className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400/50">
+                          <option value="semantic" className="bg-gray-800">Semantic Search</option>
+                          <option value="hybrid" className="bg-gray-800">Hybrid Search</option>
+                        </select>
                       </div>
-                    </div>
-                    
-                    <div className="relative overflow-hidden rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 px-4 py-5 shadow">
-                      <dt className="truncate text-sm font-medium text-gray-400">Uptime</dt>
-                      <dd className="mt-1 text-3xl font-semibold tracking-tight text-white">
-                        {formatUptime(systemStats.stats.system.uptime)}
-                      </dd>
-                      <div className="absolute bottom-0 right-0 p-3">
-                        <CheckCircleIcon className="h-4 w-4 text-blue-400" />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Quick Actions */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                  <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">Quick Search</h3>
-                    <div className="space-y-4">
-                      <input
-                        type="text"
-                        placeholder="Search your vector database..."
-                        className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
-                      />
-                      <button className="w-full rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors">
-                        Search Vectors
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">System Health</h3>
-            <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Vector Engine</span>
-                        <div className="flex items-center space-x-2">
-                          <CheckCircleIcon className="h-4 w-4 text-green-400" />
-                          <span className="text-sm text-green-400">Operational</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">0G Storage</span>
-                        <div className="flex items-center space-x-2">
-                          <CheckCircleIcon className="h-4 w-4 text-green-400" />
-                          <span className="text-sm text-green-400">Connected</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Embedding Service</span>
-                        <div className="flex items-center space-x-2">
-                          <CheckCircleIcon className="h-4 w-4 text-green-400" />
-                          <span className="text-sm text-green-400">Running</span>
-                        </div>
+                      
+                      <div className="flex items-end">
+                        <button className="w-full rounded-md bg-indigo-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition-all transform hover:scale-105">
+                          <div className="flex items-center justify-center space-x-2">
+                            <MagnifyingGlassIcon className="h-4 w-4" />
+                            <span>Search</span>
+                          </div>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -834,45 +862,286 @@ export default function AdminDashboard() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {collections.map((collection) => (
-                    <div key={collection.id} className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <FolderIcon className="h-8 w-8 text-indigo-400" />
-                        <span className={classNames(
-                          getCollectionStatus(collection) === 'active' ? 'bg-green-400/20 text-green-400' :
-                          'bg-gray-400/20 text-gray-400',
-                          'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium'
-                        )}>
-                          {getCollectionStatus(collection)}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-semibold text-white mb-2">{collection.name}</h3>
-                      <div className="space-y-2 text-sm text-gray-400">
-                        <div className="flex justify-between">
-                          <span>Vectors:</span>
-                          <span className="text-white">{collection.count.toLocaleString()}</span>
+                {collections.length === 0 ? (
+                  <div className="text-center py-16 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+                    <FolderIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-white mb-2">No Collections Yet</h3>
+                    <p className="text-gray-400 mb-6">Upload a document to create your first collection</p>
+                    <button 
+                      onClick={() => setCurrentSection('upload')}
+                      className="rounded-md bg-indigo-500 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors">
+                      Upload Document
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    {collections.map((collection) => (
+                      <div key={collection.id} className="rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-6 shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
+                              <FolderIcon className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-bold text-white">{collection.name}</h3>
+                              <p className="text-xs text-gray-400">Created {getTimeAgo(collection.created)}</p>
+                            </div>
+                          </div>
+                          <span className={classNames(
+                            getCollectionStatus(collection) === 'active' ? 'bg-green-400/20 text-green-400 border-green-400/30' :
+                            'bg-gray-400/20 text-gray-400 border-gray-400/30',
+                            'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium'
+                          )}>
+                            {getCollectionStatus(collection)}
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Dimension:</span>
-                          <span className="text-white">{collection.dimension}d</span>
+
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div className="rounded-lg bg-white/5 border border-white/10 p-3">
+                            <p className="text-xs text-gray-400 mb-1">Vectors</p>
+                            <p className="text-xl font-bold text-white">{collection.count.toLocaleString()}</p>
+                          </div>
+                          <div className="rounded-lg bg-white/5 border border-white/10 p-3">
+                            <p className="text-xs text-gray-400 mb-1">Dimension</p>
+                            <p className="text-xl font-bold text-white">{collection.dimension}d</p>
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Updated:</span>
-                          <span className="text-white">{getTimeAgo(collection.updated)}</span>
+
+                        {/* Blockchain Info */}
+                        <div className="space-y-2 mb-4 p-4 rounded-lg bg-black/20 border border-white/10">
+                          <p className="text-xs font-semibold text-indigo-300 mb-2">⛓️ Blockchain Data</p>
+                          
+                          {collection.owner && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-400">Owner:</span>
+                              <button
+                                onClick={() => copyToClipboard(collection.owner!, 'owner')}
+                                className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
+                                title={collection.owner}
+                              >
+                                {truncateHash(collection.owner)}
+                                {copiedText === 'owner' && <span className="ml-2 text-green-400">✓</span>}
+                              </button>
+                            </div>
+                          )}
+
+                          {collection.txHash && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-400">Tx Hash:</span>
+                              <button
+                                onClick={() => copyToClipboard(collection.txHash!, 'tx')}
+                                className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
+                                title={collection.txHash}
+                              >
+                                {truncateHash(collection.txHash)}
+                                {copiedText === 'tx' && <span className="ml-2 text-green-400">✓</span>}
+                              </button>
+                            </div>
+                          )}
+
+                          {collection.blockNumber && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-400">Block:</span>
+                              <span className="text-xs font-mono text-white">#{collection.blockNumber.toLocaleString()}</span>
+                            </div>
+                          )}
+
+                          {collection.blockHash && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-400">Block Hash:</span>
+                              <button
+                                onClick={() => copyToClipboard(collection.blockHash!, 'block')}
+                                className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
+                                title={collection.blockHash}
+                              >
+                                {truncateHash(collection.blockHash)}
+                                {copiedText === 'block' && <span className="ml-2 text-green-400">✓</span>}
+                              </button>
+                            </div>
+                          )}
+
+                          {collection.storageRoot && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-400">Storage Root:</span>
+                              <button
+                                onClick={() => copyToClipboard(collection.storageRoot!, 'storage')}
+                                className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
+                                title={collection.storageRoot}
+                              >
+                                {truncateHash(collection.storageRoot)}
+                                {copiedText === 'storage' && <span className="ml-2 text-green-400">✓</span>}
+                              </button>
+                            </div>
+                          )}
+
+                          {!collection.owner && !collection.txHash && (
+                            <p className="text-xs text-gray-500 italic">No blockchain data available</p>
+                          )}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex space-x-2">
+                          <button 
+                            onClick={() => handleViewVectors(collection)}
+                            className="flex-1 rounded-lg bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-400 transition-all transform hover:scale-105">
+                            View Vectors
+                          </button>
+                          <button className="flex-1 rounded-lg bg-white/10 border border-white/20 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/20 transition-colors">
+                            Search
+                          </button>
                         </div>
                       </div>
-                      <div className="mt-4 flex space-x-2">
-                        <button className="flex-1 rounded-md bg-indigo-500/20 px-3 py-2 text-xs font-semibold text-indigo-400 hover:bg-indigo-500/30 transition-colors">
-                          Search
-                        </button>
-                        <button className="flex-1 rounded-md bg-white/10 px-3 py-2 text-xs font-semibold text-white hover:bg-white/20 transition-colors">
-                          Manage
-                        </button>
-                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {currentSection === 'vectors' && selectedCollection && (
+              <div className="space-y-6">
+                {/* Header with back button */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => {
+                        setCurrentSection('collections')
+                        setSelectedCollection(null)
+                        setCollectionVectors([])
+                      }}
+                      className="rounded-md bg-white/10 border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
+                    >
+                      ← Back to Collections
+                    </button>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">{selectedCollection.name}</h2>
+                      <p className="text-sm text-gray-400">Inspecting {collectionVectors.length} vectors</p>
                     </div>
-                  ))}
+                  </div>
                 </div>
+
+                {/* Collection Info Card */}
+                <div className="rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">Collection Details</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Total Vectors</p>
+                      <p className="text-2xl font-bold text-white">{selectedCollection.count.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Dimension</p>
+                      <p className="text-2xl font-bold text-white">{selectedCollection.dimension}d</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Created</p>
+                      <p className="text-sm font-medium text-white">{new Date(selectedCollection.created).toLocaleDateString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Updated</p>
+                      <p className="text-sm font-medium text-white">{getTimeAgo(selectedCollection.updated)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Vectors List */}
+                {vectorsLoading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto"></div>
+                    <p className="mt-4 text-gray-400">Loading vectors...</p>
+                  </div>
+                ) : collectionVectors.length === 0 ? (
+                  <div className="text-center py-16 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+                    <DocumentTextIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-white mb-2">No Vectors Found</h3>
+                    <p className="text-gray-400">This collection doesn't contain any vectors yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white">Vectors ({collectionVectors.length})</h3>
+                    <div className="grid grid-cols-1 gap-4">
+                      {collectionVectors.map((vector, index) => (
+                        <div 
+                          key={vector.id} 
+                          className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-5 hover:bg-white/10 transition-all"
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center space-x-3">
+                              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 text-sm font-bold">
+                                {index + 1}
+                              </div>
+                              <div>
+                                <p className="text-sm font-mono text-white">{vector.id}</p>
+                                <p className="text-xs text-gray-400">
+                                  {new Date(vector.timestamp).toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                            <span className="text-xs font-semibold text-indigo-300 bg-indigo-500/20 px-2 py-1 rounded">
+                              {vector.vector.length}d
+                            </span>
+                          </div>
+
+                          {/* Metadata */}
+                          {vector.metadata && Object.keys(vector.metadata).length > 0 && (
+                            <div className="mb-3 p-3 rounded bg-black/20 border border-white/10">
+                              <p className="text-xs font-semibold text-gray-400 mb-2">Metadata</p>
+                              <div className="space-y-1">
+                                {vector.metadata.filename && (
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-gray-400">Filename:</span>
+                                    <span className="text-xs text-white">{vector.metadata.filename}</span>
+                                  </div>
+                                )}
+                                {vector.metadata.chunkId && (
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-gray-400">Chunk ID:</span>
+                                    <span className="text-xs font-mono text-white">{vector.metadata.chunkId}</span>
+                                  </div>
+                                )}
+                                {vector.metadata.documentId && (
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-gray-400">Document ID:</span>
+                                    <span className="text-xs font-mono text-white">{truncateHash(vector.metadata.documentId)}</span>
+                                  </div>
+                                )}
+                                {vector.metadata.text && (
+                                  <div className="mt-2">
+                                    <span className="text-xs text-gray-400 block mb-1">Text Preview:</span>
+                                    <p className="text-xs text-white bg-black/30 p-2 rounded border border-white/5 max-h-20 overflow-y-auto">
+                                      {vector.metadata.text.substring(0, 200)}
+                                      {vector.metadata.text.length > 200 && '...'}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Embedding Preview */}
+                          <div className="p-3 rounded bg-black/20 border border-white/10">
+                            <p className="text-xs font-semibold text-gray-400 mb-2">Embedding Preview (first 10 values)</p>
+                            <div className="flex flex-wrap gap-1">
+                              {vector.vector.slice(0, 10).map((val, i) => (
+                                <span 
+                                  key={i} 
+                                  className="text-xs font-mono bg-indigo-500/10 text-indigo-300 px-2 py-1 rounded"
+                                >
+                                  {val.toFixed(4)}
+                                </span>
+                              ))}
+                              {vector.vector.length > 10 && (
+                                <span className="text-xs text-gray-400 px-2 py-1">
+                                  ... +{vector.vector.length - 10} more
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -944,80 +1213,6 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {currentSection === 'network' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                  <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">0G Storage Status</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Connection Status</span>
-                        <div className="flex items-center space-x-2">
-                          <CheckCircleIcon className="h-4 w-4 text-green-400" />
-                          <span className="text-sm text-green-400">Connected</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Network</span>
-                        <span className="text-sm text-white">0G Testnet</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Storage Nodes</span>
-                        <span className="text-sm text-white">24 Active</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Avg Latency</span>
-                        <span className="text-sm text-white">142ms</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">Wallet Info</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Address</span>
-                        <span className="text-sm text-white font-mono">0x742d...a4b2</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Balance</span>
-                        <span className="text-sm text-white">1.2456 0G</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Storage Used</span>
-                        <span className="text-sm text-white">1.2 GB</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Storage Cost</span>
-                        <span className="text-sm text-white">0.0045 0G</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Recent Transactions</h3>
-                  <div className="space-y-3">
-                    {[
-                      { type: 'Upload', collection: 'AI Research Papers', size: '245 KB', cost: '0.0012 0G', time: '2 minutes ago' },
-                      { type: 'Query', collection: 'Product Documents', size: '-', cost: '0.0001 0G', time: '15 minutes ago' },
-                      { type: 'Upload', collection: 'Knowledge Base', size: '1.2 MB', cost: '0.0087 0G', time: '1 hour ago' },
-                    ].map((tx, index) => (
-                      <div key={index} className="flex items-center justify-between rounded-md bg-white/5 p-3 border border-white/10">
-                        <div className="flex items-center space-x-3">
-                          <div className={`h-2 w-2 rounded-full ${tx.type === 'Upload' ? 'bg-green-400' : 'bg-blue-400'}`}></div>
-                          <div>
-                            <p className="text-sm font-medium text-white">{tx.type} • {tx.collection}</p>
-                            <p className="text-xs text-gray-400">{tx.size !== '-' ? `${tx.size} • ` : ''}{tx.time}</p>
-                          </div>
-                        </div>
-                        <span className="text-sm text-white">{tx.cost}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {currentSection === 'settings' && (
               <div className="space-y-6">

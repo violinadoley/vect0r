@@ -31,6 +31,40 @@ export async function collectionRoutes(
   embeddingService: EmbeddingService,
   storageService: IStorageService
 ) {
+  // Cleanup redundant default collections (admin endpoint)
+  fastify.delete('/collections/cleanup-defaults', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const allCollections = await vectorEngine.listCollections();
+      // More aggressive cleanup: remove all "default" collections regardless of count
+      const defaultCollections = allCollections.filter((c: any) => 
+        c.name.toLowerCase() === 'default'
+      );
+      
+      console.log(`🧹 Found ${defaultCollections.length} default collections to cleanup`);
+      
+      let deleted = 0;
+      for (const collection of defaultCollections) {
+        const success = await vectorEngine.deleteCollection(collection.id);
+        if (success) {
+          deleted++;
+          console.log(`🗑️ Deleted default collection: ${collection.id}`);
+        }
+      }
+      
+      reply.send({
+        success: true,
+        message: `Cleaned up ${deleted} default collections`,
+        deletedCount: deleted,
+        remainingCollections: allCollections.length - deleted
+      });
+    } catch (error) {
+      reply.status(500).send({
+        error: 'Cleanup failed',
+        message: (error as Error).message
+      });
+    }
+  });
+
   // Create a new collection
   fastify.post('/collections', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
@@ -55,17 +89,21 @@ export async function collectionRoutes(
     }
   });
 
-  // List all collections
+  // List all collections (filtered to exclude default test collections)
   fastify.get('/collections', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const collections = await vectorEngine.listCollections();
+      const allCollections = await vectorEngine.listCollections();
+      // Filter out default test collections
+      const collections = allCollections.filter((c: any) => 
+        c.name.toLowerCase() !== 'default'
+      );
       reply.send({ success: true, collections });
     } catch (error) {
       reply.status(500).send({ error: `Failed to list collections: ${error}` });
     }
   });
 
-  // Get collection details
+  // Get collection details with blockchain metadata
   fastify.get('/collections/:id', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { id } = request.params as { id: string };
@@ -75,7 +113,28 @@ export async function collectionRoutes(
         return reply.status(404).send({ error: 'Collection not found' });
       }
 
-      reply.send({ success: true, collection });
+      // Try to get blockchain metadata
+      let blockchainData = null;
+      try {
+        const vectorRegistryService = new (await import('../services/VectorRegistryService')).VectorRegistryService();
+        if (vectorRegistryService.isConfigured()) {
+          blockchainData = await vectorRegistryService.getCollection(id, true);
+        }
+      } catch (error) {
+        console.warn('Could not fetch blockchain data:', error);
+      }
+
+      const enrichedCollection = {
+        ...collection,
+        owner: blockchainData?.owner,
+        txHash: blockchainData?.txHash,
+        blockNumber: blockchainData?.blockNumber,
+        blockHash: blockchainData?.blockHash,
+        storageRoot: blockchainData?.storageRoot,
+        isPublic: blockchainData?.isPublic
+      };
+
+      reply.send({ success: true, collection: enrichedCollection });
     } catch (error) {
       reply.status(500).send({ error: `Failed to get collection: ${error}` });
     }
@@ -281,6 +340,109 @@ export async function collectionRoutes(
       });
     } catch (error) {
       reply.status(500).send({ error: `Failed to export collection: ${error}` });
+    }
+  });
+
+  // Get collections by owner address
+  fastify.get('/collections/by-owner/:address', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const { address } = request.params as { address: string };
+      const allCollections = await vectorEngine.listCollections();
+      
+      // Get blockchain data for all collections and filter by owner
+      const vectorRegistryService = new (await import('../services/VectorRegistryService')).VectorRegistryService();
+      
+      if (!vectorRegistryService.isConfigured()) {
+        return reply.status(503).send({ 
+          error: 'VectorRegistry not configured',
+          message: 'Cannot filter by owner without blockchain connection'
+        });
+      }
+
+      const ownerCollections = [];
+      
+      for (const collection of allCollections) {
+        try {
+          const blockchainData = await vectorRegistryService.getCollection(collection.id, true);
+          if (blockchainData && blockchainData.owner.toLowerCase() === address.toLowerCase()) {
+            ownerCollections.push({
+              ...collection,
+              owner: blockchainData.owner,
+              txHash: blockchainData.txHash,
+              blockNumber: blockchainData.blockNumber,
+              blockHash: blockchainData.blockHash,
+              storageRoot: blockchainData.storageRoot,
+              isPublic: blockchainData.isPublic
+            });
+          }
+        } catch (error) {
+          console.warn(`Could not fetch blockchain data for collection ${collection.id}:`, error);
+        }
+      }
+
+      reply.send({ 
+        success: true, 
+        collections: ownerCollections,
+        owner: address,
+        count: ownerCollections.length
+      });
+    } catch (error) {
+      reply.status(500).send({ error: `Failed to get collections by owner: ${error}` });
+    }
+  });
+
+  // Get all vectors in a collection
+  fastify.get('/collections/:id/vectors', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const { limit = 100, offset = 0 } = request.query as { limit?: number; offset?: number };
+
+      const collection = vectorEngine.getCollection(id);
+      if (!collection) {
+        return reply.status(404).send({ error: 'Collection not found' });
+      }
+
+      const vectors = vectorEngine.getCollectionVectors(id, Number(limit), Number(offset));
+      const totalCount = vectorEngine.getCollectionVectorCount(id);
+
+      reply.send({
+        success: true,
+        collectionId: id,
+        vectors,
+        pagination: {
+          limit: Number(limit),
+          offset: Number(offset),
+          total: totalCount,
+          hasMore: Number(offset) + vectors.length < totalCount
+        }
+      });
+    } catch (error) {
+      reply.status(500).send({ error: `Failed to get vectors: ${error}` });
+    }
+  });
+
+  // Get full details of a specific vector
+  fastify.get('/collections/:id/vectors/:vectorId/full', async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const { id, vectorId } = request.params as { id: string; vectorId: string };
+      
+      const vector = vectorEngine.getVector(id, vectorId);
+      if (!vector) {
+        return reply.status(404).send({ error: 'Vector not found' });
+      }
+
+      reply.send({
+        success: true,
+        vector: {
+          id: vector.id,
+          metadata: vector.metadata,
+          timestamp: vector.timestamp,
+          embedding: vector.vector,
+          dimension: vector.vector.length
+        }
+      });
+    } catch (error) {
+      reply.status(500).send({ error: `Failed to get vector details: ${error}` });
     }
   });
 }

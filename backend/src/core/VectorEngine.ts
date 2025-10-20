@@ -52,8 +52,14 @@ export class VectorEngine {
     name: string, 
     dimension: number = config.vector.dimension,
     description: string = '',
-    isPublic: boolean = true
+    isPublic: boolean = true,
+    allowDefaultName: boolean = false
   ): Promise<string> {
+    // Prevent creating collections named "default" unless explicitly allowed
+    if (name.toLowerCase() === 'default' && !allowDefaultName) {
+      throw new Error('Cannot create collections named "default". Please choose a different name.');
+    }
+    
     const collectionId = uuidv4();
     
     // Initialize HNSW index
@@ -312,6 +318,32 @@ export class VectorEngine {
     }
 
     return deleted;
+  }
+
+  /**
+   * Get all vectors in a collection with pagination
+   */
+  getCollectionVectors(
+    collectionId: string, 
+    limit: number = 100, 
+    offset: number = 0
+  ): VectorDocument[] {
+    const docs = this.documents.get(collectionId);
+    if (!docs) {
+      throw new Error(`Collection ${collectionId} not found`);
+    }
+
+    const allVectors = Array.from(docs.values());
+    return allVectors.slice(offset, offset + limit);
+  }
+
+  /**
+   * Get total count of vectors in a collection
+   */
+  getCollectionVectorCount(collectionId: string): number {
+    const docs = this.documents.get(collectionId);
+    if (!docs) return 0;
+    return docs.size;
   }
 
   /**
