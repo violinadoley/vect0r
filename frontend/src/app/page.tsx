@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
@@ -15,7 +16,7 @@ export default function Example() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className="bg-gray-900">
+    <div className="bg-black">
       <header className="absolute inset-x-0 top-0 z-50 flex justify-center">
         <nav aria-label="Global" className="mt-6 flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg">
           <div className="flex gap-x-1">
@@ -38,7 +39,7 @@ export default function Example() {
         </nav>
         <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
           <div className="fixed inset-0 z-50" />
-          <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900/80 backdrop-blur-xl border-l border-white/20 p-6 sm:max-w-sm">
+          <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-black/80 backdrop-blur-xl border-l border-white/20 p-6 sm:max-w-sm">
             <div className="flex items-center justify-end">
               <button
                 type="button"
@@ -79,48 +80,46 @@ export default function Example() {
             className="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-288.75"
           />
         </div>
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
-              Announcing our next round of funding.{' '}
-              <Link href="#" className="font-semibold text-indigo-400">
-                <span aria-hidden="true" className="absolute inset-0" />
-                Read more <span aria-hidden="true">&rarr;</span>
-              </Link>
-            </div>
-          </div> */}
+        <div className="mx-auto max-w-7xl py-32 sm:py-48 lg:py-36">
           {/* Hero Section */}
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl font-bold tracking-tight text-balance text-white sm:text-7xl leading-tight">
-              Zero Vector
-            </h1>
-            <p className="text-xl font-medium text-indigo-300 mt-2 mb-6">
-              The First Decentralized Vector Database on 0G Network
-            </p>
-            <p className="mt-8 text-lg font-normal text-pretty text-gray-300 sm:text-xl leading-relaxed max-w-3xl mx-auto">
-              Store, search, and scale your AI embeddings with blockchain-powered security. No vendor lock-in, complete data sovereignty.
-            </p>
-            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-              <Link
-                href="/docs"
-                className="rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 px-8 py-4 text-base font-medium text-white shadow-lg hover:from-indigo-400 hover:to-purple-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all duration-300 transform hover:scale-105"
-              >
-                Start Building
-              </Link>
-              <Link href="/docs" className="text-base font-medium text-gray-300 hover:text-white transition-colors duration-200 group">
-                View API Docs <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-1">→</span>
-              </Link>
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            <div className="flex-1 text-left">
+              <h1 className="text-5xl font-bold tracking-tight text-balance text-white leading-tight font-sans">
+                Vect0r: 
+                <span className="text-5xl font-bold tracking-tight text-balance text-white leading-tight font-sans"> 0G chain's own vector database</span>
+              </h1>
+              <p className="mt-8 text-lg font-normal text-pretty text-white/50 sm:text-xl leading-relaxed font-mono">
+                Store, search, and scale your AI embeddings with blockchain-powered security. <br/> No vendor lock-in. Complete data sovereignty.
+              </p>
+              <div className="mt-12 flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+                <Link
+                  href="/admin-dashboard"
+                  className=" bg-white px-8 py-4 text-base font-semibold text-black shadow-lg hover:bg-white/80 transition-all duration-300 transform hover:scale-105 font-mono"
+                >
+                  Get Started
+                </Link>
+              </div>
+            </div>
+            <div className="flex-1 flex justify-center lg:justify-end">
+              <Image
+                src="/hero.png"
+                alt="Zero Vector Hero"
+                width={600}
+                height={600}
+                className="w-full max-w-lg h-auto"
+                priority
+              />
             </div>
           </div>
         </div>
 
         {/* Key Value Propositions */}
         <div className="mx-auto max-w-7xl px-6 py-20 sm:py-28 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center mb-16">
-            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4">
+          <div className="max-w-3xl text-left mb-16">
+            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4 font-sans">
               Why Zero Vector?
             </h2>
-            <p className="text-xl text-gray-300 leading-relaxed">
+            <p className="text-xl text-white leading-relaxed font-mono">
               The first vector database that puts you in complete control
             </p>
           </div>
@@ -131,8 +130,8 @@ export default function Example() {
                   🔒
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Truly Decentralized</h3>
-                  <p className="text-gray-300 leading-relaxed">Your data stays under your control. Built on 0G Chain with smart contract governance and distributed storage - no central authority can lock you out.</p>
+                  <h3 className="text-xl font-semibold text-white mb-3 font-sans">Truly Decentralized</h3>
+                  <p className="text-white leading-relaxed font-mono">Your data stays under your control. Built on 0G Chain with smart contract governance and distributed storage - no central authority can lock you out.</p>
                 </div>
               </div>
             </div>
@@ -143,8 +142,8 @@ export default function Example() {
                   ⚡
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Lightning Fast</h3>
-                  <p className="text-gray-300 leading-relaxed">HNSW indexing delivers millisecond vector search at scale. Handle millions of embeddings with real-time similarity search and batch operations.</p>
+                  <h3 className="text-xl font-semibold text-white mb-3 font-sans">Lightning Fast</h3>
+                  <p className="text-white leading-relaxed font-mono">HNSW indexing delivers millisecond vector search at scale. Handle millions of embeddings with real-time similarity search and batch operations.</p>
                 </div>
               </div>
             </div>
@@ -155,8 +154,8 @@ export default function Example() {
                   🚀
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Developer First</h3>
-                  <p className="text-gray-300 leading-relaxed">RESTful APIs, automatic embedding generation, and intelligent document processing. Get from prototype to production in minutes.</p>
+                  <h3 className="text-xl font-semibold text-white mb-3 font-sans">Developer First</h3>
+                  <p className="text-white leading-relaxed font-mono">RESTful APIs, automatic embedding generation, and intelligent document processing. Get from prototype to production in minutes.</p>
                 </div>
               </div>
             </div>
@@ -167,8 +166,8 @@ export default function Example() {
                   🌐
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Zero Vendor Lock-in</h3>
-                  <p className="text-gray-300 leading-relaxed">Deploy anywhere, migrate easily. Open standards and portable infrastructure mean your vector data is never trapped.</p>
+                  <h3 className="text-xl font-semibold text-white mb-3 font-sans">Zero Vendor Lock-in</h3>
+                  <p className="text-white leading-relaxed font-mono">Deploy anywhere, migrate easily. Open standards and portable infrastructure mean your vector data is never trapped.</p>
                 </div>
               </div>
             </div>
@@ -176,12 +175,12 @@ export default function Example() {
         </div>
 
         {/* Technical Features */}
-        <div className="mx-auto max-w-7xl px-6 py-20 sm:py-28 lg:px-8 bg-gradient-to-b from-gray-900/50 to-gray-800/30 rounded-3xl mx-4 my-12">
-          <div className="mx-auto max-w-3xl text-center mb-16">
-            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4">
+        <div className="mx-auto max-w-7xl px-6 py-20 sm:py-28 lg:px-8 bg-gradient-to-b from-black/50 to-black/30 rounded-3xl mx-4 my-12">
+          <div className="max-w-3xl text-left mb-16">
+            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4 font-sans">
               Technical Excellence
             </h2>
-            <p className="text-xl text-gray-300 leading-relaxed">
+            <p className="text-xl text-white leading-relaxed font-mono">
               Built for scale, designed for developers
             </p>
           </div>
@@ -193,8 +192,8 @@ export default function Example() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0-1.125-.504-1.125-1.125V11.25a9 9 0 00-9-9z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Smart Document Processing</h3>
-                <p className="text-gray-300 leading-relaxed">
+                <h3 className="text-xl font-semibold text-white mb-4 font-sans">Smart Document Processing</h3>
+                <p className="text-white leading-relaxed font-mono">
                   Multi-format support for PDF, text, and documents. Intelligent chunking strategies and automatic text-to-embedding generation.
                 </p>
               </div>
@@ -207,8 +206,8 @@ export default function Example() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Advanced Vector Operations</h3>
-                <p className="text-gray-300 leading-relaxed">
+                <h3 className="text-xl font-semibold text-white mb-4 font-sans">Advanced Vector Operations</h3>
+                <p className="text-white leading-relaxed font-mono">
                   Configurable vector dimensions, semantic similarity search with filtering, and real-time collection management.
                 </p>
               </div>
@@ -221,8 +220,8 @@ export default function Example() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Blockchain Integration</h3>
-                <p className="text-gray-300 leading-relaxed">
+                <h3 className="text-xl font-semibold text-white mb-4 font-sans">Blockchain Integration</h3>
+                <p className="text-white leading-relaxed font-mono">
                   On-chain metadata and access control with immutable collection registry and 0G Network smart contract governance.
                 </p>
               </div>
@@ -232,11 +231,11 @@ export default function Example() {
 
         {/* Use Cases */}
         <div className="mx-auto max-w-7xl px-6 py-16 pb-8 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center mb-16">
-            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4">
+          <div className="max-w-3xl text-left mb-16">
+            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4 font-sans">
               Built for Modern AI Applications
             </h2>
-            <p className="text-xl text-gray-300 leading-relaxed">
+            <p className="text-xl text-white leading-relaxed font-mono">
               From search to recommendations, power your next AI breakthrough
             </p>
           </div>
@@ -247,8 +246,8 @@ export default function Example() {
                   🤖
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2">AI-Powered Search</h3>
-                  <p className="text-gray-300 leading-relaxed">
+                  <h3 className="text-lg font-semibold text-white mb-2 font-sans">AI-Powered Search</h3>
+                  <p className="text-white leading-relaxed font-mono">
                     Build semantic search across documents, knowledge bases, and content libraries with natural language queries.
                   </p>
                 </div>
@@ -261,8 +260,8 @@ export default function Example() {
                   💬
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2">RAG Applications</h3>
-                  <p className="text-gray-300 leading-relaxed">
+                  <h3 className="text-lg font-semibold text-white mb-2 font-sans">RAG Applications</h3>
+                  <p className="text-white leading-relaxed font-mono">
                     Power chatbots and AI assistants with retrieval-augmented generation using your own knowledge base.
                   </p>
                 </div>
@@ -275,8 +274,8 @@ export default function Example() {
                   📊
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2">Recommendation Systems</h3>
-                  <p className="text-gray-300 leading-relaxed">
+                  <h3 className="text-lg font-semibold text-white mb-2 font-sans">Recommendation Systems</h3>
+                  <p className="text-white leading-relaxed font-mono">
                     Create intelligent recommendations based on content similarity and user behavior patterns.
                   </p>
                 </div>
@@ -289,8 +288,8 @@ export default function Example() {
                   📚
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2">Document Intelligence</h3>
-                  <p className="text-gray-300 leading-relaxed">
+                  <h3 className="text-lg font-semibold text-white mb-2 font-sans">Document Intelligence</h3>
+                  <p className="text-white leading-relaxed font-mono">
                     Process and analyze large document collections with automatic categorization and clustering.
                   </p>
                 </div>
@@ -303,8 +302,8 @@ export default function Example() {
                   🔬
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2">Research & Analytics</h3>
-                  <p className="text-gray-300 leading-relaxed">
+                  <h3 className="text-lg font-semibold text-white mb-2 font-sans">Research & Analytics</h3>
+                  <p className="text-white leading-relaxed font-mono">
                     Search academic papers, research data, and technical documentation with semantic understanding.
                   </p>
                 </div>
