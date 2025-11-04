@@ -188,8 +188,10 @@ export default function AdminDashboard() {
           return true // Include collections without owner info
         })
         
-        // Sort by created date descending (newest first)
-        const sortedCollections = filteredCollections.sort((a, b) => b.created - a.created)
+        // Sort by created date descending (newest first) without mutating the original array
+        const sortedCollections = [...filteredCollections].sort(
+          (a: Collection, b: Collection) => b.created - a.created
+        )
         
         setCollections(sortedCollections)
       }
