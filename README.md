@@ -24,7 +24,6 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
-- [API Documentation](#api-documentation)
 - [Smart Contracts](#smart-contracts)
 - [Deployment](#deployment)
 - [Development](#development)
