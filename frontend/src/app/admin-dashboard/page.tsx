@@ -987,11 +987,11 @@ export default function AdminDashboard() {
                         {/* Stats Grid */}
                         <div className="grid grid-cols-2 gap-3 mb-4">
                           <div className="rounded-lg bg-white/5 flex flex-row justify-between border border-white/10 p-3">
-                            <p className="text-xs text-white mb-1">Vectors</p>
+                            <p className="text-xl font-bold text-white">Vectors</p>
                             <p className="text-xl font-bold text-white">{collection.count.toLocaleString()}</p>
                           </div>
                           <div className="rounded-lg bg-white/5 flex flex-row justify-between border border-white/10 p-3">
-                            <p className="text-xs text-white mb-1">Dimension</p>
+                            <p className="text-xl font-bold text-white">Dimension</p>
                             <p className="text-xl font-bold text-white">{collection.dimension}d</p>
                           </div>
                         </div>
@@ -1070,10 +1070,10 @@ export default function AdminDashboard() {
                         <div className="flex space-x-2">
                           <button 
                             onClick={() => handleViewVectors(collection)}
-                            className="flex-1 rounded-lg bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-400 transition-all transform hover:scale-105">
+                            className="flex-1 bg-white px-4 py-2.5 text-sm text-black hover:bg-white/80 transition-all transform hover:scale-105">
                             View Vectors
                           </button>
-                          <button className="flex-1 rounded-lg bg-white/10 border border-white/20 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/20 transition-colors">
+                          <button className="flex-1 bg-white/10 border border-white/20 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/20 transition-colors">
                             Search
                           </button>
                         </div>
