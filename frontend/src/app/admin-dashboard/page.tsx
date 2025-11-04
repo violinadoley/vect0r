@@ -22,8 +22,8 @@ const navigation = [
   { name: 'Upload', href: '#upload', icon: ArrowUpTrayIcon, current: false },
   { name: 'Collections', href: '#collections', icon: FolderIcon, current: false },
   { name: 'RAG Demo', href: '#rag', icon: SparklesIcon, current: false },
-  { name: 'Search', href: '#search', icon: MagnifyingGlassIcon, current: false },
-  { name: 'Settings', href: '#settings', icon: CogIcon, current: false },
+  // { name: 'Search', href: '#search', icon: MagnifyingGlassIcon, current: false },
+  // { name: 'Settings', href: '#settings', icon: CogIcon, current: false },
 ]
 
 // API configuration
