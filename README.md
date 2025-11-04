@@ -1,4 +1,4 @@
-# Zero Vector
+# Vect0r
 
 <div align="center">
 
@@ -28,9 +28,7 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 - [Smart Contracts](#smart-contracts)
 - [Deployment](#deployment)
 - [Development](#development)
-- [Contributing](#contributing)
 - [License](#license)
-- [Support](#support)
 
 ---
 
@@ -40,12 +38,12 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 
 ### Key Value Propositions
 
-- 🔒 **Decentralized & Secure**: Data stored on 0G Storage with blockchain integrity verification
-- 🚀 **High Performance**: Optimized HNSW (Hierarchical Navigable Small World) index for fast similarity search
-- 🤖 **AI-Optimized**: Built-in support for embeddings, RAG (Retrieval Augmented Generation), and semantic search
-- 🌐 **No Vendor Lock-in**: Deploy anywhere, migrate easily - your data remains under your control
-- 💰 **Cost-Effective**: Leverage decentralized infrastructure for reduced operational costs
-- ⚡ **Real-time**: Instant synchronization across the decentralized network
+-  **Decentralized & Secure**: Data stored on 0G Storage with blockchain integrity verification
+-  **High Performance**: Optimized HNSW (Hierarchical Navigable Small World) index for fast similarity search
+-  **AI-Optimized**: Built-in support for embeddings, RAG (Retrieval Augmented Generation), and semantic search
+-  **No Vendor Lock-in**: Deploy anywhere, migrate easily - your data remains under your control
+-  **Cost-Effective**: Leverage decentralized infrastructure for reduced operational costs
+-  **Real-time**: Instant synchronization across the decentralized network
 
 ---
 
@@ -614,25 +612,6 @@ npm run deploy   # Deploy contracts
 npm test         # Run contract tests
 \`\`\`
 
-### Adding New Features
-
-1. Create feature branch: \`git checkout -b feature/new-feature\`
-2. Make your changes
-3. Test thoroughly
-4. Submit a pull request
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (\`git checkout -b feature/amazing-feature\`)
-3. Commit your changes (\`git commit -m 'Add some amazing feature'\`)
-4. Push to the branch (\`git push origin feature/amazing-feature\`)
-5. Open a Pull Request
-
 ---
 
 ## 📄 License
@@ -641,21 +620,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🆘 Support
-
 ### Resources
 
 - **Documentation**: [See \`/docs\` route in the application]
 - **0G Network Docs**: [https://docs.0g.ai](https://docs.0g.ai)
 - **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
-
-## 📞 Contact
-
-For questions, support, or collaboration opportunities:
-
-- **Email**: [Your email]
-- **Website**: [Your website]
-- **Twitter**: [@yourhandle]
 
 ---
 
