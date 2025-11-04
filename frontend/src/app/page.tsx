@@ -86,10 +86,11 @@ export default function Example() {
             <div className="flex-1 text-left">
               <h1 className="text-5xl font-bold tracking-tight text-balance text-white leading-tight font-sans">
                 Vect0r: 
-                <span className="text-5xl font-bold tracking-tight text-balance text-white leading-tight font-sans"> 0G chain's own vector database</span>
+                <span className="text-5xl font-bold tracking-tight text-balance text-white leading-tight font-sans"> 0G's own vector database</span>
               </h1>
               <p className="mt-8 text-lg font-normal text-pretty text-white/50 sm:text-xl leading-relaxed font-mono">
-                Store, search, and scale your AI embeddings with blockchain-powered security. <br/> No vendor lock-in. Complete data sovereignty.
+                Make your deAI apps truly decentralized with our vector database. <br/> No vendor lock-in. Complete data sovereignty. <br/>
+                Built on 0G Storage Layer.
               </p>
               <div className="mt-12 flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
                 <Link
