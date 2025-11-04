@@ -15,6 +15,7 @@ import {
   CheckCircleIcon,
   SparklesIcon
 } from '@heroicons/react/24/outline'
+import Link from 'next/link'
 
 const navigation = [
   { name: 'Overview', href: '#overview', icon: ChartBarIcon, current: true },
@@ -422,7 +423,8 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-black">
+      
       {/* Background decorations */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute left-[calc(50%-4rem)] top-10 -z-10 transform-gpu blur-3xl sm:left-[calc(50%-18rem)] lg:left-48 lg:top-[calc(50%-30rem)] xl:left-[calc(50%-24rem)]">
@@ -438,7 +440,7 @@ export default function AdminDashboard() {
       <div className="flex h-screen">
         {/* Sidebar */}
         <div className="flex w-64 flex-col">
-          <div className="flex min-h-0 flex-1 flex-col bg-gray-800/50 backdrop-blur-xl border-r border-white/10">
+          <div className="flex min-h-0 flex-1 flex-col bg-black backdrop-blur-xl border-r border-white/10">
             <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
               <div className="flex flex-shrink-0 items-center px-4">
                 <div className="flex items-center space-x-3">
@@ -482,39 +484,42 @@ export default function AdminDashboard() {
         {/* Main content */}
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* Top bar */}
-          <header className="bg-gray-800/30 backdrop-blur-md border-b border-white/10 px-6 py-4">
+          <header className="bg-black backdrop-blur-md border-b border-white/10 px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-semibold text-white capitalize">{currentSection}</h1>
-                <p className="text-sm text-gray-400">Decentralized Vector Database Dashboard</p>
+                <p className="text-sm text-white">Decentralized Vector Database Dashboard</p>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2 rounded-full bg-white/10 px-3 py-1 backdrop-blur-sm border border-white/20">
                   <div className="h-2 w-2 bg-green-400 rounded-full"></div>
                   <span className="text-sm text-white">Live</span>
                 </div>
-                <button className="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors">
+                <button className=" bg-white px-3 py-2 text-sm text-black hover:bg-white/80">
                   New Collection
+                </button>
+                <button className=" bg-white px-3 py-2 text-sm text-black hover:bg-white/80">
+                  <Link href="/">Home</Link>
                 </button>
               </div>
             </div>
           </header>
 
           {/* Dashboard content */}
-          <main className="flex-1 overflow-y-auto bg-gray-900/50 p-6">
+          <main className="flex-1 overflow-y-auto bg-black p-6">
             {currentSection === 'overview' && (
               <div className="space-y-6">
                 {/* Loading State */}
                 {loading && (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto"></div>
-                    <p className="mt-4 text-gray-400">Loading dashboard data...</p>
+                    <p className="mt-4 text-white">Loading dashboard data...</p>
                   </div>
                 )}
 
                 {/* Error State */}
                 {error && (
-                  <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-6">
+                  <div className="rounded-lg bg-black border border-red-500/20 p-6">
                     <div className="flex items-center">
                       <ExclamationTriangleIcon className="h-6 w-6 text-red-400 mr-3" />
                       <p className="text-red-400">{error}</p>
@@ -523,7 +528,7 @@ export default function AdminDashboard() {
                 )}
 
                 {/* Enhanced Search */}
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h3 className="text-lg font-semibold text-white mb-6">Vector Search</h3>
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -549,7 +554,7 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Results Count</label>
-                        <select className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400/50">
+                        <select className="w-full bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-black-400 focus:outline-none focus:ring-1 focus:ring-indigo-400/50">
                           <option value="5" className="bg-gray-800">5 results</option>
                           <option value="10" className="bg-gray-800">10 results</option>
                           <option value="20" className="bg-gray-800">20 results</option>
@@ -559,7 +564,7 @@ export default function AdminDashboard() {
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">Search Type</label>
-                        <select className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400/50">
+                        <select className="w-full bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-black-400 focus:outline-none focus:ring-1 focus:ring-indigo-400/50">
                           <option value="semantic" className="bg-gray-800">Semantic Search</option>
                           <option value="hybrid" className="bg-gray-800">Hybrid Search</option>
                         </select>
@@ -579,14 +584,14 @@ export default function AdminDashboard() {
 
                 {/* Recent Collections */}
                 {systemStats && (
-                  <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+                  <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10">
                     <div className="px-6 py-4 border-b border-white/10">
                       <h3 className="text-lg font-semibold text-white">Collections</h3>
                     </div>
                     <div className="p-6">
                       <div className="space-y-4">
                         {collections.length > 0 ? collections.map((collection) => (
-                          <div key={collection.id} className="flex items-center justify-between rounded-md bg-white/5 p-4 border border-white/10">
+                          <div key={collection.id} className="flex items-center justify-between rounded-md bg-black p-4 border border-white/10">
                             <div className="flex items-center space-x-4">
                               <div className="flex-shrink-0">
                                 <FolderIcon className="h-6 w-6 text-indigo-400" />
@@ -608,7 +613,7 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                         )) : (
-                          <div className="text-center py-8 text-gray-400">
+                          <div className="text-center py-8 text-white">
                             <FolderIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
                             <p>No collections found</p>
                             <p className="text-sm mt-2">Upload a document to create your first collection</p>
@@ -628,7 +633,7 @@ export default function AdminDashboard() {
                   {selectedFile && (
                     <button
                       onClick={resetUpload}
-                      className="rounded-md bg-gray-500 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-400 transition-colors"
+                      className="rounded-md bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-400 transition-colors"
                     >
                       Reset
                     </button>
@@ -636,7 +641,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* File Upload Area */}
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">Select Document</h3>
                   
                   {!selectedFile ? (
@@ -654,7 +659,7 @@ export default function AdminDashboard() {
                     >
                       <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                       <p className="text-lg text-white mb-2">Drop your document here</p>
-                      <p className="text-sm text-gray-400 mb-4">
+                      <p className="text-sm text-white mb-4">
                         Supports PDF, TXT, and JSON files up to 50MB
                       </p>
                       <input
@@ -672,13 +677,13 @@ export default function AdminDashboard() {
                       </label>
                     </div>
                   ) : (
-                    <div className="rounded-lg bg-white/10 border border-white/20 p-4">
+                    <div className="rounded-lg bg-black border border-white/20 p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <DocumentTextIcon className="h-8 w-8 text-indigo-400" />
                           <div>
                             <p className="text-sm font-medium text-white">{selectedFile.name}</p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-white">
                               {formatBytes(selectedFile.size)} • {selectedFile.type || 'Unknown type'}
                             </p>
                           </div>
@@ -693,11 +698,11 @@ export default function AdminDashboard() {
                 {selectedFile && (
                   <div className="space-y-6">
                     {/* Chunking Strategy */}
-                    <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                    <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                       <h3 className="text-lg font-semibold text-white mb-4">Chunking Strategy</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label className="block text-sm font-medium text-gray-400 mb-2">
+                          <label className="block text-sm font-medium text-white mb-2">
                             Strategy Type
                           </label>
                           <select
@@ -710,7 +715,7 @@ export default function AdminDashboard() {
                             <option value="paragraph">Paragraph-based</option>
                             <option value="semantic">Semantic (experimental)</option>
                           </select>
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-white mt-1">
                             {uploadConfig.chunkingStrategy.type === 'sentence' && 'Split at sentence boundaries with size limits'}
                             {uploadConfig.chunkingStrategy.type === 'fixed' && 'Split into fixed-size chunks with overlap'}
                             {uploadConfig.chunkingStrategy.type === 'paragraph' && 'Split at paragraph boundaries'}
@@ -719,7 +724,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-400 mb-2">
+                          <label className="block text-sm font-medium text-white mb-2">
                             Chunk Size
                           </label>
                           <input
@@ -730,14 +735,14 @@ export default function AdminDashboard() {
                             onChange={(e) => updateChunkingStrategy('chunkSize', parseInt(e.target.value))}
                             className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                           />
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-white mt-1">
                             Maximum characters per chunk (100-5000)
                           </p>
                         </div>
 
                         {uploadConfig.chunkingStrategy.type !== 'paragraph' && (
                           <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">
+                            <label className="block text-sm font-medium text-white mb-2">
                               Overlap
                             </label>
                             <input
@@ -748,7 +753,7 @@ export default function AdminDashboard() {
                               onChange={(e) => updateChunkingStrategy('overlap', parseInt(e.target.value))}
                               className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                             />
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-white mt-1">
                               Characters to overlap between chunks
                             </p>
                           </div>
@@ -757,13 +762,13 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Processing Options */}
-                    <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                    <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                       <h3 className="text-lg font-semibold text-white mb-4">Processing Options</h3>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div>
                             <label className="text-sm font-medium text-white">Generate Embeddings</label>
-                            <p className="text-xs text-gray-400">Create vector embeddings for semantic search</p>
+                            <p className="text-xs text-white">Create vector embeddings for semantic search</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -779,7 +784,7 @@ export default function AdminDashboard() {
                         <div className="flex items-center justify-between">
                           <div>
                             <label className="text-sm font-medium text-white">Use 0G Compute</label>
-                            <p className="text-xs text-gray-400">Process embeddings on 0G network (experimental)</p>
+                            <p className="text-xs text-white">Process embeddings on 0G network (experimental)</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -795,13 +800,13 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Collection Settings */}
-                    <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                    <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                       <h3 className="text-lg font-semibold text-white mb-4">Collection Settings</h3>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div>
                             <label className="text-sm font-medium text-white">Create New Collection</label>
-                            <p className="text-xs text-gray-400">Create a new collection for this document</p>
+                            <p className="text-xs text-white">Create a new collection for this document</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -817,7 +822,7 @@ export default function AdminDashboard() {
                         {uploadConfig.createNewCollection ? (
                           <div className="space-y-4">
                             <div>
-                              <label className="block text-sm font-medium text-gray-400 mb-2">
+                              <label className="block text-sm font-medium text-white mb-2">
                                 Collection Name
                               </label>
                               <input
@@ -829,7 +834,7 @@ export default function AdminDashboard() {
                               />
                             </div>
                             <div>
-                              <label className="block text-sm font-medium text-gray-400 mb-2">
+                              <label className="block text-sm font-medium text-white mb-2">
                                 Description (Optional)
                               </label>
                               <textarea
@@ -843,7 +848,7 @@ export default function AdminDashboard() {
                           </div>
                         ) : (
                           <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-2">
+                            <label className="block text-sm font-medium text-white mb-2">
                               Select Existing Collection
                             </label>
                             <select
@@ -864,7 +869,7 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Upload Button and Progress */}
-                    <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                    <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                       {!isUploading && !uploadResult && (
                         <button
                           onClick={handleFileUpload}
@@ -899,17 +904,17 @@ export default function AdminDashboard() {
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div className="space-y-2">
-                              <p className="text-gray-400">Document:</p>
+                              <p className="text-white">Document:</p>
                               <p className="text-white">{uploadResult.document.filename}</p>
-                              <p className="text-gray-400">Size: {formatBytes(uploadResult.document.originalSize)}</p>
-                              <p className="text-gray-400">Processing time: {uploadResult.document.processingTime}ms</p>
+                              <p className="text-white">Size: {formatBytes(uploadResult.document.originalSize)}</p>
+                              <p className="text-white">Processing time: {uploadResult.document.processingTime}ms</p>
                             </div>
                             
                             <div className="space-y-2">
-                              <p className="text-gray-400">Results:</p>
+                              <p className="text-white">Results:</p>
                               <p className="text-white">{uploadResult.processing.totalChunks} chunks created</p>
                               <p className="text-white">{uploadResult.processing.insertedVectors} vectors inserted</p>
-                              <p className="text-gray-400">Collection: {uploadResult.collection.name}</p>
+                              <p className="text-white">Collection: {uploadResult.collection.name}</p>
                             </div>
                           </div>
 
@@ -939,19 +944,19 @@ export default function AdminDashboard() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-semibold text-white">Vector Collections</h2>
-                  <button className="rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors">
+                  <button className=" bg-white px-4 py-2 text-sm text-black hover:bg-white/80">
                     Create Collection
                   </button>
                 </div>
 
                 {collections.length === 0 ? (
-                  <div className="text-center py-16 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
-                    <FolderIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                  <div className="text-center py-16 rounded-lg bg-black backdrop-blur-sm border border-white/10">
+                    <FolderIcon className="mx-auto h-16 w-16 text-white mb-4" />
                     <h3 className="text-lg font-medium text-white mb-2">No Collections Yet</h3>
-                    <p className="text-gray-400 mb-6">Upload a document to create your first collection</p>
+                    <p className="text-white mb-6">Upload a document to create your first collection</p>
                     <button 
                       onClick={() => setCurrentSection('upload')}
-                      className="rounded-md bg-indigo-500 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors">
+                      className=" bg-white px-6 py-3 text-sm text-black hover:bg-white/80">
                       Upload Document
                     </button>
                   </div>
@@ -967,7 +972,7 @@ export default function AdminDashboard() {
                             </div>
                             <div>
                               <h3 className="text-lg font-bold text-white">{collection.name}</h3>
-                              <p className="text-xs text-gray-400">Created {getTimeAgo(collection.created)}</p>
+                              <p className="text-xs text-white">Created {getTimeAgo(collection.created)}</p>
                             </div>
                           </div>
                           <span className={classNames(
@@ -982,11 +987,11 @@ export default function AdminDashboard() {
                         {/* Stats Grid */}
                         <div className="grid grid-cols-2 gap-3 mb-4">
                           <div className="rounded-lg bg-white/5 border border-white/10 p-3">
-                            <p className="text-xs text-gray-400 mb-1">Vectors</p>
+                            <p className="text-xs text-white mb-1">Vectors</p>
                             <p className="text-xl font-bold text-white">{collection.count.toLocaleString()}</p>
                           </div>
                           <div className="rounded-lg bg-white/5 border border-white/10 p-3">
-                            <p className="text-xs text-gray-400 mb-1">Dimension</p>
+                            <p className="text-xs text-white mb-1">Dimension</p>
                             <p className="text-xl font-bold text-white">{collection.dimension}d</p>
                           </div>
                         </div>
@@ -998,7 +1003,7 @@ export default function AdminDashboard() {
                             
                             {collection.owner && (
                               <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-400">Owner:</span>
+                                <span className="text-xs text-white">Owner:</span>
                                 <button
                                   onClick={() => copyToClipboard(collection.owner!, 'owner')}
                                   className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
@@ -1012,7 +1017,7 @@ export default function AdminDashboard() {
 
                             {collection.txHash && (
                               <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-400">Tx Hash:</span>
+                                <span className="text-xs text-white">Tx Hash:</span>
                                 <button
                                   onClick={() => copyToClipboard(collection.txHash!, 'tx')}
                                   className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
@@ -1026,14 +1031,14 @@ export default function AdminDashboard() {
 
                             {collection.blockNumber && (
                               <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-400">Block:</span>
+                                <span className="text-xs text-white">Block:</span>
                                 <span className="text-xs font-mono text-white">#{collection.blockNumber.toLocaleString()}</span>
                               </div>
                             )}
 
                             {collection.blockHash && (
                               <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-400">Block Hash:</span>
+                                <span className="text-xs text-white">Block Hash:</span>
                                 <button
                                   onClick={() => copyToClipboard(collection.blockHash!, 'block')}
                                   className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
@@ -1047,7 +1052,7 @@ export default function AdminDashboard() {
 
                             {collection.storageRoot && (
                               <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-400">Storage Root:</span>
+                                <span className="text-xs text-white">Storage Root:</span>
                                 <button
                                   onClick={() => copyToClipboard(collection.storageRoot!, 'storage')}
                                   className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
@@ -1096,7 +1101,7 @@ export default function AdminDashboard() {
                     </button>
                     <div>
                       <h2 className="text-2xl font-bold text-white">{selectedCollection.name}</h2>
-                      <p className="text-sm text-gray-400">Inspecting {collectionVectors.length} vectors</p>
+                      <p className="text-sm text-white">Inspecting {collectionVectors.length} vectors</p>
                     </div>
                   </div>
                 </div>
@@ -1106,19 +1111,19 @@ export default function AdminDashboard() {
                   <h3 className="text-lg font-semibold text-white mb-4">Collection Details</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Total Vectors</p>
+                      <p className="text-xs text-white mb-1">Total Vectors</p>
                       <p className="text-2xl font-bold text-white">{selectedCollection.count.toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Dimension</p>
+                      <p className="text-xs text-white mb-1">Dimension</p>
                       <p className="text-2xl font-bold text-white">{selectedCollection.dimension}d</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Created</p>
+                      <p className="text-xs text-white mb-1">Created</p>
                       <p className="text-sm font-medium text-white">{new Date(selectedCollection.created).toLocaleDateString()}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Updated</p>
+                      <p className="text-xs text-white mb-1">Updated</p>
                       <p className="text-sm font-medium text-white">{getTimeAgo(selectedCollection.updated)}</p>
                     </div>
                   </div>
@@ -1128,13 +1133,13 @@ export default function AdminDashboard() {
                 {vectorsLoading ? (
                   <div className="text-center py-12">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto"></div>
-                    <p className="mt-4 text-gray-400">Loading vectors...</p>
+                    <p className="mt-4 text-white">Loading vectors...</p>
                   </div>
                 ) : collectionVectors.length === 0 ? (
                   <div className="text-center py-16 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
-                    <DocumentTextIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                    <DocumentTextIcon className="mx-auto h-16 w-16 text-white mb-4" />
                     <h3 className="text-lg font-medium text-white mb-2">No Vectors Found</h3>
-                    <p className="text-gray-400">This collection doesn't contain any vectors yet</p>
+                    <p className="text-white">This collection doesn't contain any vectors yet</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -1152,7 +1157,7 @@ export default function AdminDashboard() {
                               </div>
                               <div>
                                 <p className="text-sm font-mono text-white">{vector.id}</p>
-                                <p className="text-xs text-gray-400">
+                                <p className="text-xs text-white">
                                   {new Date(vector.timestamp).toLocaleString()}
                                 </p>
                               </div>
@@ -1165,29 +1170,29 @@ export default function AdminDashboard() {
                           {/* Metadata */}
                           {vector.metadata && Object.keys(vector.metadata).length > 0 && (
                             <div className="mb-3 p-3 rounded bg-black/20 border border-white/10">
-                              <p className="text-xs font-semibold text-gray-400 mb-2">Metadata</p>
+                              <p className="text-xs font-semibold text-white mb-2">Metadata</p>
                               <div className="space-y-1">
                                 {vector.metadata.filename && (
                                   <div className="flex items-center justify-between">
-                                    <span className="text-xs text-gray-400">Filename:</span>
+                                    <span className="text-xs text-white">Filename:</span>
                                     <span className="text-xs text-white">{vector.metadata.filename}</span>
                                   </div>
                                 )}
                                 {vector.metadata.chunkId && (
                                   <div className="flex items-center justify-between">
-                                    <span className="text-xs text-gray-400">Chunk ID:</span>
+                                    <span className="text-xs text-white">Chunk ID:</span>
                                     <span className="text-xs font-mono text-white">{vector.metadata.chunkId}</span>
                                   </div>
                                 )}
                                 {vector.metadata.documentId && (
                                   <div className="flex items-center justify-between">
-                                    <span className="text-xs text-gray-400">Document ID:</span>
+                                    <span className="text-xs text-white">Document ID:</span>
                                     <span className="text-xs font-mono text-white">{truncateHash(vector.metadata.documentId)}</span>
                                   </div>
                                 )}
                                 {vector.metadata.text && (
                                   <div className="mt-2">
-                                    <span className="text-xs text-gray-400 block mb-1">Text Preview:</span>
+                                    <span className="text-xs text-white block mb-1">Text Preview:</span>
                                     <p className="text-xs text-white bg-black/30 p-2 rounded border border-white/5 max-h-20 overflow-y-auto">
                                       {vector.metadata.text.substring(0, 200)}
                                       {vector.metadata.text.length > 200 && '...'}
@@ -1200,7 +1205,7 @@ export default function AdminDashboard() {
 
                           {/* Embedding Preview */}
                           <div className="p-3 rounded bg-black/20 border border-white/10">
-                            <p className="text-xs font-semibold text-gray-400 mb-2">Embedding Preview (first 10 values)</p>
+                            <p className="text-xs font-semibold text-white mb-2">Embedding Preview (first 10 values)</p>
                             <div className="flex flex-wrap gap-1">
                               {vector.vector.slice(0, 10).map((val, i) => (
                                 <span 
@@ -1211,7 +1216,7 @@ export default function AdminDashboard() {
                                 </span>
                               ))}
                               {vector.vector.length > 10 && (
-                                <span className="text-xs text-gray-400 px-2 py-1">
+                                <span className="text-xs text-white px-2 py-1">
                                   ... +{vector.vector.length - 10} more
                                 </span>
                               )}
@@ -1235,7 +1240,7 @@ export default function AdminDashboard() {
                         <SparklesIcon className="h-7 w-7 text-purple-400" />
                         <span>RAG Demo - AI-Powered Q&A</span>
                       </h2>
-                      <p className="text-gray-300">
+                      <p className="text-white">
                         Ask questions about your uploaded documents. The system retrieves relevant information 
                         from your vector database and uses AI to generate accurate answers.
                       </p>
@@ -1244,10 +1249,10 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Collection Selector */}
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">1. Select Collection</h3>
                   {collections.filter(c => c.count > 0).length === 0 ? (
-                    <div className="text-center py-8 text-gray-400">
+                    <div className="text-center py-8 text-white">
                       <FolderIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
                       <p>No collections with vectors available</p>
                       <p className="text-sm mt-2">Upload a document to create a collection with vectors</p>
@@ -1277,7 +1282,7 @@ export default function AdminDashboard() {
                             )}
                           </div>
                           <h4 className="text-sm font-semibold text-white mb-1">{collection.name}</h4>
-                          <p className="text-xs text-gray-400">{collection.count} vectors</p>
+                          <p className="text-xs text-white">{collection.count} vectors</p>
                         </button>
                       ))}
                     </div>
@@ -1287,7 +1292,7 @@ export default function AdminDashboard() {
                 {/* Query Input */}
                 {selectedRagCollection && (
                   <>
-                    <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                    <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                       <h3 className="text-lg font-semibold text-white mb-4">2. Ask Your Question</h3>
                       <textarea
                         value={ragQuery}
@@ -1317,7 +1322,7 @@ export default function AdminDashboard() {
 
                     {/* Processing Steps */}
                     {ragLoading && (
-                      <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                      <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                         <div className="space-y-4">
                           {[
                             { step: 1, icon: '🔍', label: 'Searching vector database...', desc: 'Finding relevant document chunks' },
@@ -1336,7 +1341,7 @@ export default function AdminDashboard() {
                               <div className="text-3xl">{item.icon}</div>
                               <div className="flex-1">
                                 <p className="text-white font-medium">{item.label}</p>
-                                <p className="text-sm text-gray-400">{item.desc}</p>
+                                <p className="text-sm text-white">{item.desc}</p>
                               </div>
                               {ragProcessingStep === item.step && (
                                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-400"></div>
@@ -1352,12 +1357,12 @@ export default function AdminDashboard() {
 
                     {/* Error Display */}
                     {ragError && (
-                      <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-6">
+                      <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                         <div className="flex items-center space-x-3">
-                          <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+                          <ExclamationTriangleIcon className="h-6 w-6 text-white" />
                           <div>
-                            <p className="text-red-400 font-medium">Error</p>
-                            <p className="text-red-300 text-sm">{ragError}</p>
+                            <p className="text-white font-medium">Error</p>
+                            <p className="text-white text-sm">{ragError}</p>
                           </div>
                         </div>
                       </div>
@@ -1366,7 +1371,7 @@ export default function AdminDashboard() {
                     {/* Answer Display */}
                     {ragAnswer && (
                       <>
-                        <div className="rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-6 shadow-2xl">
+                        <div className="rounded-xl bg-black backdrop-blur-sm border border-white/10 p-6 shadow-2xl">
                           <div className="flex items-start justify-between mb-4">
                             <h3 className="text-xl font-bold text-white flex items-center space-x-2">
                               <SparklesIcon className="h-6 w-6 text-purple-400" />
@@ -1374,15 +1379,15 @@ export default function AdminDashboard() {
                             </h3>
                             <button
                               onClick={() => copyToClipboard(ragAnswer, 'answer')}
-                              className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+                              className="text-sm text-white hover:text-white transition-colors"
                             >
                               {copiedText === 'answer' ? '✓ Copied' : 'Copy'}
                             </button>
                           </div>
                           <div className="prose prose-invert max-w-none">
-                            <p className="text-gray-100 leading-relaxed whitespace-pre-wrap">{ragAnswer}</p>
+                            <p className="text-white leading-relaxed whitespace-pre-wrap">{ragAnswer}</p>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
+                          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white">
                             <span>Processed in {ragProcessingTime}ms</span>
                             <span>{ragSources.length} sources used</span>
                           </div>
@@ -1390,7 +1395,7 @@ export default function AdminDashboard() {
 
                         {/* Sources Display */}
                         {ragSources.length > 0 && (
-                          <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                          <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                             <h3 className="text-lg font-semibold text-white mb-4">
                               Source Documents ({ragSources.length})
                             </h3>
@@ -1410,7 +1415,7 @@ export default function AdminDashboard() {
                                           {index + 1}
                                         </div>
                                         <div className="flex-1">
-                                          <p className="text-sm text-gray-400">
+                                          <p className="text-sm text-white">
                                             {source.metadata?.filename || 'Unknown source'}
                                           </p>
                                         </div>
@@ -1422,7 +1427,7 @@ export default function AdminDashboard() {
                                         )}>
                                           {(source.score * 100).toFixed(1)}% match
                                         </span>
-                                        <span className="text-gray-400">
+                                        <span className="text-white">
                                           {expandedSource === index ? '▼' : '▶'}
                                         </span>
                                       </div>
@@ -1431,11 +1436,11 @@ export default function AdminDashboard() {
                                   
                                   {expandedSource === index && (
                                     <div className="px-4 pb-4 border-t border-white/10 pt-4">
-                                      <p className="text-sm text-gray-300 leading-relaxed mb-3">
+                                      <p className="text-sm text-white leading-relaxed mb-3">
                                         {source.text}
                                       </p>
                                       {source.metadata && (
-                                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-400">
+                                        <div className="grid grid-cols-2 gap-2 text-xs text-white">
                                           {source.metadata.chunkId && (
                                             <div>
                                               <span className="font-medium">Chunk ID:</span> {source.metadata.chunkId}
@@ -1462,25 +1467,25 @@ export default function AdminDashboard() {
 
             {currentSection === 'search' && (
               <div className="space-y-6">
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h2 className="text-xl font-semibold text-white mb-6">Semantic Search</h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                      <label className="block text-sm font-medium text-white mb-2">
                         Search Query
                       </label>
                       <textarea
                         rows={3}
-                        className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white placeholder-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                         placeholder="Enter your search query or paste text to find similar vectors..."
                       />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">
+                        <label className="block text-sm font-medium text-white mb-2">
                           Collection
                         </label>
-                        <select className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400">
+                        <select className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400">
                           <option>All Collections</option>
                           <option>AI Research Papers</option>
                           <option>Product Documents</option>
@@ -1488,10 +1493,10 @@ export default function AdminDashboard() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">
+                        <label className="block text-sm font-medium text-white mb-2">
                           Results
                         </label>
-                        <select className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400">
+                        <select className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400">
                           <option>10 results</option>
                           <option>25 results</option>
                           <option>50 results</option>
@@ -1499,7 +1504,7 @@ export default function AdminDashboard() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">
+                        <label className="block text-sm font-medium text-white mb-2">
                           Threshold
                         </label>
                         <input
@@ -1508,7 +1513,7 @@ export default function AdminDashboard() {
                           max="1"
                           step="0.1"
                           defaultValue="0.7"
-                          className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                          className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                         />
                       </div>
                     </div>
@@ -1518,9 +1523,9 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                  <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">Search Results</h3>
-                  <div className="text-center py-8 text-gray-400">
+                  <div className="text-center py-8 text-white">
                     <MagnifyingGlassIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
                     <p>Enter a search query to find similar vectors</p>
                   </div>
@@ -1531,73 +1536,73 @@ export default function AdminDashboard() {
 
             {currentSection === 'settings' && (
               <div className="space-y-6">
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">Vector Configuration</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                      <label className="block text-sm font-medium text-white mb-2">
                         Default Dimension
                       </label>
                       <input
                         type="number"
                         defaultValue="768"
-                        className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                      <label className="block text-sm font-medium text-white mb-2">
                         HNSW M Parameter
                       </label>
                       <input
                         type="number"
                         defaultValue="16"
-                        className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                      <label className="block text-sm font-medium text-white mb-2">
                         EF Construction
                       </label>
                       <input
                         type="number"
                         defaultValue="200"
-                        className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                      <label className="block text-sm font-medium text-white mb-2">
                         EF Search
                       </label>
                       <input
                         type="number"
                         defaultValue="50"
-                        className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">0G Network Settings</h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                      <label className="block text-sm font-medium text-white mb-2">
                         RPC Endpoint
                       </label>
                       <input
                         type="text"
                         defaultValue="https://evmrpc-testnet.0g.ai"
-                        className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                          className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                      <label className="block text-sm font-medium text-white mb-2">
                         Storage URL
                       </label>
                       <input
                         type="text"
                         defaultValue="https://storage-testnet.0g.ai"
-                        className="w-full rounded-md bg-white/10 border border-white/20 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-1 focus:ring-indigo-400"
+                        className="w-full rounded-md bg-black backdrop-blur-sm border border-white/10 px-3 py-2 text-white focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-1 focus:ring-indigo-400"
                       />
                     </div>
                   </div>
@@ -1607,46 +1612,46 @@ export default function AdminDashboard() {
 
             {currentSection === 'developer' && (
               <div className="space-y-6">
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">API Documentation</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div className="rounded-md bg-white/10 p-4 border border-white/20">
                         <h4 className="font-medium text-white mb-2">Collections API</h4>
-                        <code className="text-sm text-gray-400">GET /api/v1/collections</code>
+                        <code className="text-sm text-white">GET /api/v1/collections</code>
                       </div>
                       <div className="rounded-md bg-white/10 p-4 border border-white/20">
                         <h4 className="font-medium text-white mb-2">Search Vectors</h4>
-                        <code className="text-sm text-gray-400">POST /api/v1/collections/:id/search</code>
+                        <code className="text-sm text-white">POST /api/v1/collections/:id/search</code>
                       </div>
                       <div className="rounded-md bg-white/10 p-4 border border-white/20">
                         <h4 className="font-medium text-white mb-2">Insert Vector</h4>
-                        <code className="text-sm text-gray-400">POST /api/v1/collections/:id/vectors</code>
+                        <code className="text-sm text-white">POST /api/v1/collections/:id/vectors</code>
                       </div>
                     </div>
                     <div className="space-y-4">
                       <div className="rounded-md bg-white/10 p-4 border border-white/20">
                         <h4 className="font-medium text-white mb-2">System Health</h4>
-                        <code className="text-sm text-gray-400">GET /api/v1/health</code>
+                        <code className="text-sm text-white">GET /api/v1/health</code>
                       </div>
                       <div className="rounded-md bg-white/10 p-4 border border-white/20">
                         <h4 className="font-medium text-white mb-2">System Stats</h4>
-                        <code className="text-sm text-gray-400">GET /api/v1/stats</code>
+                        <code className="text-sm text-white">GET /api/v1/stats</code>
                       </div>
                       <div className="rounded-md bg-white/10 p-4 border border-white/20">
                         <h4 className="font-medium text-white mb-2">Configuration</h4>
-                        <code className="text-sm text-gray-400">GET /api/v1/config</code>
+                        <code className="text-sm text-white">GET /api/v1/config</code>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-6">
+                <div className="rounded-lg bg-black backdrop-blur-sm border border-white/10 p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">SDK Examples</h3>
                   <div className="space-y-4">
                     <div>
                       <h4 className="font-medium text-white mb-2">JavaScript/TypeScript</h4>
-                      <pre className="rounded-md bg-gray-800/50 p-4 text-sm text-gray-300 overflow-x-auto">
+                          <pre className="rounded-md bg-black backdrop-blur-sm border border-white/10 p-4 text-sm text-white overflow-x-auto">
 {`const client = new VectorZeroClient('http://localhost:3001');
 
 // Create collection
