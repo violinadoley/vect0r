@@ -571,7 +571,7 @@ export default function AdminDashboard() {
                       </div>
                       
                       <div className="flex items-end">
-                        <button className="w-full rounded-md bg-indigo-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition-all transform hover:scale-105">
+                        <button className="w-full bg-white px-6 py-2.5 text-sm text-black hover:bg-white/80 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition-all transform hover:scale-105">
                           <div className="flex items-center justify-center space-x-2">
                             <MagnifyingGlassIcon className="h-4 w-4" />
                             <span>Search</span>
@@ -671,7 +671,7 @@ export default function AdminDashboard() {
                       />
                       <label
                         htmlFor="file-upload"
-                        className="rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors cursor-pointer"
+                        className="bg-white px-6 py-3 text-sm text-black hover:bg-white/80 cursor-pointer"
                       >
                         Choose File
                       </label>
@@ -921,13 +921,13 @@ export default function AdminDashboard() {
                           <div className="flex space-x-4">
                             <button
                               onClick={() => setCurrentSection('collections')}
-                              className="flex-1 rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors"
+                              className="flex-1 bg-white px-4 py-2 text-sm text-black hover:bg-white/80 transition-colors"
                             >
                               View Collection
                             </button>
                             <button
                               onClick={resetUpload}
-                              className="flex-1 rounded-md bg-gray-600 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-500 transition-colors"
+                              className="flex-1 bg-white px-4 py-2 text-sm text-black hover:bg-white/80 transition-colors"
                             >
                               Upload Another
                             </button>
@@ -1258,7 +1258,7 @@ export default function AdminDashboard() {
                       <p className="text-sm mt-2">Upload a document to create a collection with vectors</p>
                       <button 
                         onClick={() => setCurrentSection('upload')}
-                        className="mt-4 rounded-md bg-indigo-500 px-6 py-2 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors">
+                        className="mt-4 bg-white px-6 py-2 text-sm text-black hover:bg-white/80 transition-colors">
                         Upload Documents
                       </button>
                     </div>
@@ -1517,7 +1517,7 @@ export default function AdminDashboard() {
                         />
                       </div>
                     </div>
-                    <button className="w-full rounded-md bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400 transition-colors">
+                    <button className="w-full bg-white px-4 py-2 text-sm text-black hover:bg-white/80 transition-colors">
                       Search Vectors
                     </button>
                   </div>
