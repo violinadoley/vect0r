@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**The First Decentralized Vector Database on 0G Network**
+**The First Decentralized  Database on 0G Network**
 
 Store, search, and scale your AI embeddings with blockchain-powered security. No vendor lock-in, complete data sovereignty.
 
@@ -14,7 +14,7 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
@@ -32,9 +32,9 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 
 ---
 
-## 🎯 Overview
+##  Overview
 
-**Zero Vector** is a production-ready, decentralized vector database built on the 0G Network. It provides a complete solution for storing, indexing, and searching vector embeddings with blockchain-powered security and transparency. The platform enables developers to build AI-powered applications without vendor lock-in, leveraging decentralized storage and on-chain metadata management.
+**Vect0r** is a production-ready, decentralized  database built on the 0G Network. It provides a complete solution for storing, indexing, and searching  embeddings with blockchain-powered security and transparency. The platform enables developers to build AI-powered applications without vendor lock-in, leveraging decentralized storage and on-chain metadata management.
 
 ### Key Value Propositions
 
@@ -47,7 +47,7 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 
 ---
 
-## ✨ Features
+##  Features
 
 ### Core Functionality
 
@@ -56,11 +56,11 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
   - Intelligent chunking strategies (fixed-size, sentence-based, paragraph-based)
   - Automatic text extraction and preprocessing
 
-- **Vector Operations**
+- ** Operations**
   - Generate embeddings using state-of-the-art models
-  - Create and manage vector collections
+  - Create and manage  collections
   - High-performance similarity search using HNSW algorithm
-  - Configurable vector dimensions (default: 768)
+  - Configurable  dimensions (default: 768)
 
 - **RAG (Retrieval Augmented Generation)**
   - Integrated RAG pipeline with Google Gemini AI
@@ -88,42 +88,9 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
-Zero Vector consists of three main components:
-
-\`\`\`
-┌─────────────────────────────────────────────────────────────┐
-│                      Frontend (Next.js)                      │
-│  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐        │
-│  │  Dashboard  │  │   Upload    │  │    RAG UI    │        │
-│  └─────────────┘  └─────────────┘  └──────────────┘        │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           │ HTTP/REST
-                           │
-┌──────────────────────────▼──────────────────────────────────┐
-│              Backend API (Fastify + TypeScript)              │
-│  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐     │
-│  │ VectorEngine │  │ Embedding    │  │ Document      │     │
-│  │  (HNSW)      │  │ Service      │  │ Processing    │     │
-│  └──────────────┘  └──────────────┘  └───────────────┘     │
-│  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐     │
-│  │ Gemini AI    │  │ 0G Storage   │  │ Vector        │     │
-│  │ Service      │  │ SDK          │  │ Registry      │     │
-│  └──────────────┘  └──────────────┘  └───────────────┘     │
-└────────────┬────────────────┬───────────────────────────────┘
-             │                │
-             │                │
-    ┌────────▼────────┐  ┌────▼──────────────┐
-    │   0G Storage    │  │   0G Chain        │
-    │   Network       │  │   (EVM)           │
-    │                 │  │                   │
-    │  • Data Storage │  │  • VectorRegistry │
-    │  • Replication  │  │  • StorageOracle  │
-    │  • Retrieval    │  │  • Metadata       │
-    └─────────────────┘  └───────────────────┘
-\`\`\`
+Vect0r consists of three main components:
 
 ### Component Overview
 
@@ -133,13 +100,13 @@ Zero Vector consists of three main components:
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Backend
 - **Runtime**: Node.js 20.x
 - **Framework**: Fastify 5.6
 - **Language**: TypeScript 5.9
-- **Vector Database**: HNSWlib (Hierarchical Navigable Small World)
+- ** Database**: HNSWlib (Hierarchical Navigable Small World)
 - **AI/ML**: 
   - Google Gemini API (for RAG)
   - Embedding models (all-MiniLM-L6-v2)
@@ -164,7 +131,7 @@ Zero Vector consists of three main components:
 
 ---
 
-## 📦 Prerequisites
+##  Prerequisites
 
 Before you begin, ensure you have the following installed:
 
@@ -178,7 +145,7 @@ Before you begin, ensure you have the following installed:
 
 ---
 
-## 🚀 Installation
+##  Installation
 
 ### 1. Clone the Repository
 
@@ -210,7 +177,7 @@ npm install
 
 ---
 
-## ⚙️ Configuration
+##  Configuration
 
 ### Backend Configuration
 
@@ -229,7 +196,7 @@ ZG_CHAIN_ID=16661
 PRIVATE_KEY=your_0g_private_key_here
 
 # Smart Contract Addresses (Mainnet)
-VECTOR_REGISTRY_ADDRESS=0x796373F5e5879AF43233B378c0425b54797Cf5B9
+_REGISTRY_ADDRESS=0x796373F5e5879AF43233B378c0425b54797Cf5B9
 STORAGE_ORACLE_ADDRESS=0x52c0088C5b910FE40Cb217CF2d3E779113a0007e
 
 # AI/ML Configuration
@@ -239,8 +206,8 @@ GEMINI_API_KEY=your_gemini_api_key_here
 UPLOAD_PATH=./uploads
 MAX_FILE_SIZE=50MB
 
-# Vector Database Configuration (Optional)
-VECTOR_DIMENSION=768
+#  Database Configuration (Optional)
+_DIMENSION=768
 HNSW_M=16
 HNSW_EF_CONSTRUCTION=200
 HNSW_EF_SEARCH=50
@@ -268,7 +235,7 @@ ZG_EXPLORER_URL=https://chainscan.0g.ai
 
 ---
 
-## 💻 Usage
+##  Usage
 
 ### Starting the Development Server
 
@@ -310,7 +277,7 @@ npm start
 
 ---
 
-## 📚 API Documentation
+##  API Documentation
 
 ### Base URL
 
@@ -348,7 +315,7 @@ Response:
   "stats": {
     "collections": {
       "total": 5,
-      "totalVectors": 1250
+      "totals": 1250
     },
     "storage": {
       "0g": {
@@ -388,13 +355,13 @@ Content-Type: application/json
 GET /api/v1/collections/:id
 \`\`\`
 
-**Search Vectors**
+**Search s**
 \`\`\`http
 POST /api/v1/collections/:id/search
 Content-Type: application/json
 
 {
-  "queryVector": [0.1, 0.2, ...],
+  "query": [0.1, 0.2, ...],
   "topK": 10,
   "threshold": 0.7
 }
@@ -482,11 +449,11 @@ Common HTTP status codes:
 
 ---
 
-## 🔐 Smart Contracts
+##  Smart Contracts
 
-### VectorRegistry.sol
+### Registry.sol
 
-Manages vector collections and metadata on-chain.
+Manages  collections and metadata on-chain.
 
 **Key Functions:**
 - \`createCollection()\` - Register a new collection
@@ -532,7 +499,7 @@ See \`DEPLOYMENT.md\` for detailed deployment instructions.
 
 ---
 
-## 🚀 Deployment
+##  Deployment
 
 ### Backend Deployment (Render)
 
@@ -564,7 +531,7 @@ For detailed instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ---
 
-## 🔧 Development
+##  Development
 
 ### Project Structure
 
@@ -573,7 +540,7 @@ For detailed instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 ├── backend/                 # Backend API server
 │   ├── src/
 │   │   ├── config/         # Configuration
-│   │   ├── core/           # Core engine (VectorEngine)
+│   │   ├── core/           # Core engine (Engine)
 │   │   ├── routes/         # API routes
 │   │   └── services/       # Business logic services
 │   ├── dist/               # Compiled JavaScript
@@ -614,7 +581,7 @@ npm test         # Run contract tests
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -632,6 +599,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with ❤️ for the decentralized future**
 
-[⬆ Back to Top](#zero-vector)
+[⬆ Back to Top](#Vect0r-)
 
 </div>
