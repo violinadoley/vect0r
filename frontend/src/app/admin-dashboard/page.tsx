@@ -444,11 +444,11 @@ export default function AdminDashboard() {
             <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
               <div className="flex flex-shrink-0 items-center px-4">
                 <div className="flex items-center space-x-3">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                    <ServerIcon className="h-5 w-5 text-white" />
+                  <div className="h-8 w-8 flex bg-white items-center justify-center">
+                    <ServerIcon className="h-5 w-5 text-black" />
                   </div>
                   <div>
-                    <h1 className="text-lg font-semibold text-white">VectorZero</h1>
+                    <h1 className="text-lg font-semibold text-white">Vect0r</h1>
                     <p className="text-xs text-gray-400">Admin Dashboard</p>
                   </div>
                 </div>
@@ -460,14 +460,14 @@ export default function AdminDashboard() {
                     onClick={() => setCurrentSection(item.href.slice(1))}
                     className={classNames(
                       currentSection === item.href.slice(1)
-                        ? 'bg-indigo-500/20 border-indigo-400/50 text-white'
-                        : 'text-gray-300 hover:bg-white/5 border-transparent',
-                      'group flex w-full items-center rounded-md border px-2 py-2 text-sm font-medium transition-all duration-200'
+                        ? 'bg-white/20 border-white/20 text-white'
+                        : ' text-white/50 hover:bg-white/10 hover:text-white border-transparent',
+                      'group flex w-full items-center border px-2 py-2 text-sm font-medium transition-all duration-200'
                     )}
                   >
                     <item.icon
                       className={classNames(
-                        currentSection === item.href.slice(1) ? 'text-indigo-400' : 'text-gray-400 group-hover:text-gray-300',
+                        currentSection === item.href.slice(1) ? 'text-white' : 'text-gray-400/30 group-hover:text-gray-300',
                         'mr-3 h-5 w-5 flex-shrink-0'
                       )}
                     />
