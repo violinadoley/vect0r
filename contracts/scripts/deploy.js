@@ -1,14 +1,24 @@
 const { ethers } = require("hardhat");
+const fs = require('fs');
+const path = require('path');
 
 async function main() {
-  console.log("🚀 Deploying VectorZero contracts...");
+  console.log("🚀 Deploying VectorZero contracts to 0G Network...");
   
   const [deployer] = await ethers.getSigners();
   console.log("📱 Deploying with account:", deployer.address);
   
+  // Get network info
+  const network = await ethers.provider.getNetwork();
+  console.log("🌐 Network:", network.name, "Chain ID:", network.chainId.toString());
+  
   // Get account balance
   const balance = await ethers.provider.getBalance(deployer.address);
   console.log("💰 Account balance:", ethers.formatEther(balance), "ETH");
+
+  if (balance < ethers.parseEther("0.01")) {
+    throw new Error("❌ Insufficient balance! Need at least 0.01 ETH for deployment.");
+  }
 
   // Deploy VectorRegistry
   console.log("\n📋 Deploying VectorRegistry...");
@@ -27,6 +37,17 @@ async function main() {
   
   const storageOracleAddress = await storageOracle.getAddress();
   console.log("✅ StorageOracle deployed to:", storageOracleAddress);
+
+  // Verify deployments
+  console.log("\n🔍 Verifying deployments...");
+  
+  // Test VectorRegistry
+  const totalCollections = await vectorRegistry.totalCollections();
+  console.log("📊 VectorRegistry total collections:", totalCollections.toString());
+  
+  // Test StorageOracle
+  const [totalData, totalNodes] = await storageOracle.getStorageStats();
+  console.log("💾 StorageOracle stats - Data:", totalData.toString(), "Nodes:", totalNodes.toString());
 
   // Setup initial configuration
   console.log("\n⚙️  Setting up initial configuration...");
@@ -53,6 +74,14 @@ async function main() {
     await createCollectionTx.wait();
     console.log("✅ Created demo collection");
 
+    // Register a demo storage node
+    const registerNodeTx = await storageOracle.registerNode(
+      "node-001", 
+      ethers.parseEther("100") // 100 ETH worth of storage capacity
+    );
+    await registerNodeTx.wait();
+    console.log("✅ Registered demo storage node");
+
   } catch (error) {
     console.warn("⚠️  Setup configuration failed:", error.message);
   }
@@ -60,24 +89,49 @@ async function main() {
   // Display deployment summary
   console.log("\n📋 Deployment Summary:");
   console.log("=====================================");
+  console.log("Network:", network.name);
+  console.log("Chain ID:", network.chainId.toString());
   console.log("Deployer:", deployer.address);
   console.log("VectorRegistry:", vectorRegistryAddress);
   console.log("StorageOracle:", storageOracleAddress);
   console.log("=====================================");
 
-  // Save deployment addresses
+  // Save deployment addresses to a file
   const deploymentInfo = {
+    network: network.name,
+    chainId: network.chainId.toString(),
     deployer: deployer.address,
     contracts: {
       VectorRegistry: vectorRegistryAddress,
       StorageOracle: storageOracleAddress
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    gasUsed: {
+      VectorRegistry: "Estimated",
+      StorageOracle: "Estimated"
+    }
   };
 
-  const fs = require('fs');
-  fs.writeFileSync('deployed-contracts.json', JSON.stringify(deploymentInfo, null, 2));
-  console.log("\n💾 Contract addresses saved to deployed-contracts.json");
+  const deploymentsDir = path.join(__dirname, '../deployments');
+  if (!fs.existsSync(deploymentsDir)) {
+    fs.mkdirSync(deploymentsDir, { recursive: true });
+  }
+
+  const filename = `deployment-${Date.now()}.json`;
+  fs.writeFileSync(
+    path.join(deploymentsDir, filename),
+    JSON.stringify(deploymentInfo, null, 2)
+  );
+
+  console.log(`\n💾 Deployment info saved to: deployments/${filename}`);
+  console.log("\n🎉 Deployment completed successfully!");
+
+  // Instructions for next steps
+  console.log("\n📝 Next Steps:");
+  console.log("1. Update your backend .env file with these contract addresses");
+  console.log("2. Fund your account if needed for transactions");
+  console.log("3. Start the backend server and test the integration");
+  console.log("4. Deploy the frontend and connect to these contracts");
 }
 
 main()

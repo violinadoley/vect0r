@@ -10,9 +10,9 @@ export class Real0GComputeService {
   private provider: ethers.JsonRpcProvider;
   private wallet: ethers.Wallet | null = null;
   
-  // 0G Compute endpoints (replace with actual endpoints when available)
-  private readonly COMPUTE_RPC_URL = 'https://compute-testnet.0g.ai'; // Placeholder
-  private readonly COMPUTE_API_URL = 'https://api-compute-testnet.0g.ai'; // Placeholder
+  // 0G Compute endpoints
+  private readonly COMPUTE_RPC_URL = 'https://compute.0g.ai';
+  private readonly COMPUTE_API_URL = 'https://api-compute.0g.ai';
 
   constructor() {
     this.provider = new ethers.JsonRpcProvider(config.zg.chainRpcUrl);
@@ -72,15 +72,14 @@ export class Real0GComputeService {
           throw new Error(`0G Compute task failed: ${response.data.error}`);
         }
 
-      } catch (networkError) {
-        console.warn('0G Compute Network not available, using local fallback');
-        return this.fallbackLocalEmbedding(text);
+      } catch (networkError: any) {
+        console.error('❌ 0G Compute Network unavailable:', networkError);
+        throw new Error(`0G Compute Network unavailable: ${networkError.message || networkError}`);
       }
 
-    } catch (error) {
-      console.error('Error with 0G Compute:', error);
-      // Fallback to local computation
-      return this.fallbackLocalEmbedding(text);
+    } catch (error: any) {
+      console.error('❌ Error with 0G Compute:', error);
+      throw new Error(`Failed to generate embedding via 0G Compute: ${error.message || error}`);
     }
   }
 
@@ -128,14 +127,14 @@ export class Real0GComputeService {
           throw new Error(`0G Compute batch task failed: ${response.data.error}`);
         }
 
-      } catch (networkError) {
-        console.warn('0G Compute Network not available, using local fallback');
-        return texts.map(text => this.fallbackLocalEmbedding(text));
+      } catch (networkError: any) {
+        console.error('❌ 0G Compute Network unavailable:', networkError);
+        throw new Error(`0G Compute Network unavailable: ${networkError.message || networkError}`);
       }
 
-    } catch (error) {
-      console.error('Error with 0G Compute batch:', error);
-      return texts.map(text => this.fallbackLocalEmbedding(text));
+    } catch (error: any) {
+      console.error('❌ Error with 0G Compute batch:', error);
+      throw new Error(`Failed to generate batch embeddings via 0G Compute: ${error.message || error}`);
     }
   }
 
@@ -214,31 +213,6 @@ export class Real0GComputeService {
     }
   }
 
-  /**
-   * Fallback local embedding generation
-   */
-  private fallbackLocalEmbedding(text: string): number[] {
-    console.log('🔄 Using local embedding fallback...');
-    
-    // Create deterministic embedding (same as EmbeddingService)
-    const dimension = 768;
-    const vector: number[] = new Array(dimension);
-    
-    const crypto = require('crypto-js');
-    const hash = crypto.SHA256(text).toString();
-    
-    for (let i = 0; i < dimension; i++) {
-      const seedValue = parseInt(hash.slice(i * 2 % hash.length, (i * 2 + 2) % hash.length), 16) || 0;
-      vector[i] = (seedValue / 255) * 2 - 1;
-    }
-    
-    const magnitude = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
-    for (let i = 0; i < dimension; i++) {
-      vector[i] /= magnitude;
-    }
-    
-    return vector;
-  }
 
   /**
    * Get service statistics
@@ -249,7 +223,7 @@ export class Real0GComputeService {
       walletConnected: !!this.wallet,
       walletAddress: this.wallet?.address,
       computeEndpoint: this.COMPUTE_API_URL,
-      fallbackEnabled: true
+      fallbackEnabled: false
     };
   }
 }

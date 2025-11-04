@@ -115,6 +115,43 @@ contract StorageOracle is AccessControl, ReentrancyGuard {
     }
 
     /**
+     * @dev Remove duplicate node addresses
+     * @param addresses Array of node addresses
+     * @return Unique array of node addresses
+     */
+    function _removeDuplicates(string[] memory addresses) internal pure returns (string[] memory) {
+        if (addresses.length == 0) {
+            return addresses;
+        }
+        
+        // Use a temporary array to track unique addresses
+        string[] memory unique = new string[](addresses.length);
+        uint256 uniqueCount = 0;
+        
+        for (uint256 i = 0; i < addresses.length; i++) {
+            bool isDuplicate = false;
+            for (uint256 j = 0; j < uniqueCount; j++) {
+                if (keccak256(bytes(unique[j])) == keccak256(bytes(addresses[i]))) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate) {
+                unique[uniqueCount] = addresses[i];
+                uniqueCount++;
+            }
+        }
+        
+        // Resize array to actual unique count
+        string[] memory result = new string[](uniqueCount);
+        for (uint256 i = 0; i < uniqueCount; i++) {
+            result[i] = unique[i];
+        }
+        
+        return result;
+    }
+
+    /**
      * @dev Register data storage across 0G nodes
      * @param root 0G Storage root hash
      * @param nodeAddresses Array of node addresses storing the data
@@ -131,6 +168,14 @@ contract StorageOracle is AccessControl, ReentrancyGuard {
         require(nodeAddresses.length > 0, "StorageOracle: No storage nodes provided");
         require(size > 0, "StorageOracle: Invalid size");
 
+        // Remove duplicates and validate nodes are active
+        string[] memory uniqueNodes = _removeDuplicates(nodeAddresses);
+        require(uniqueNodes.length > 0, "StorageOracle: No valid nodes after deduplication");
+        
+        for (uint256 i = 0; i < uniqueNodes.length; i++) {
+            require(storageNodes[uniqueNodes[i]].isActive, "StorageOracle: Node not active");
+        }
+
         StorageEntry storage entry = storageEntries[root];
         
         if (!entry.isActive) {
@@ -142,23 +187,23 @@ contract StorageOracle is AccessControl, ReentrancyGuard {
         }
 
         entry.root = root;
-        entry.nodeAddresses = nodeAddresses;
+        entry.nodeAddresses = uniqueNodes;
         entry.size = size;
-        entry.replicationFactor = nodeAddresses.length;
+        entry.replicationFactor = uniqueNodes.length;
         entry.timestamp = block.timestamp;
         entry.isActive = true;
         entry.integrityHash = integrityHash;
 
         // Update node data mappings
-        for (uint256 i = 0; i < nodeAddresses.length; i++) {
-            _addDataToNode(nodeAddresses[i], root);
-            _updateNodeUsage(nodeAddresses[i], size, true);
+        for (uint256 i = 0; i < uniqueNodes.length; i++) {
+            _addDataToNode(uniqueNodes[i], root);
+            _updateNodeUsage(uniqueNodes[i], size, true);
         }
 
-        emit DataStored(root, nodeAddresses, size, nodeAddresses.length);
+        emit DataStored(root, uniqueNodes, size, uniqueNodes.length);
 
         // Check if replication is sufficient
-        if (nodeAddresses.length < minReplicationFactor) {
+        if (uniqueNodes.length < minReplicationFactor) {
             _requestReplication(root, minReplicationFactor);
         }
     }
@@ -276,6 +321,20 @@ contract StorageOracle is AccessControl, ReentrancyGuard {
             if (node.reliability > 10) {
                 node.reliability -= 10;
             }
+            
+            // Auto-deactivate if reliability too low
+            if (node.reliability <= 30 && node.isActive) {
+                node.isActive = false;
+                if (totalActiveNodes > 0) {
+                    totalActiveNodes--;
+                }
+                emit NodeDeactivated(nodeAddress);
+                // Trigger replication check for all data on this node
+                string[] storage nodeData = nodeDataMap[nodeAddress];
+                for (uint256 i = 0; i < nodeData.length; i++) {
+                    _checkReplication(nodeData[i]);
+                }
+            }
         }
     }
 
@@ -306,16 +365,35 @@ contract StorageOracle is AccessControl, ReentrancyGuard {
 
         ReplicationRequest storage request = replicationRequests[root];
         require(!request.fulfilled, "StorageOracle: Replication already completed");
+        
+        // Remove duplicates
+        string[] memory uniqueNodes = _removeDuplicates(newNodeAddresses);
+        require(uniqueNodes.length >= minReplicationFactor, "StorageOracle: Insufficient replication");
+        
+        // Validate all nodes are active
+        for (uint256 i = 0; i < uniqueNodes.length; i++) {
+            require(storageNodes[uniqueNodes[i]].isActive, "StorageOracle: Node not active");
+        }
+        
+        // Remove old node mappings
+        for (uint256 i = 0; i < entry.nodeAddresses.length; i++) {
+            _removeDataFromNode(entry.nodeAddresses[i], root);
+        }
+        
+        // Add new node mappings
+        for (uint256 i = 0; i < uniqueNodes.length; i++) {
+            _addDataToNode(uniqueNodes[i], root);
+        }
 
         // Update storage entry
-        entry.nodeAddresses = newNodeAddresses;
-        entry.replicationFactor = newNodeAddresses.length;
+        entry.nodeAddresses = uniqueNodes;
+        entry.replicationFactor = uniqueNodes.length;
         entry.timestamp = block.timestamp;
 
         // Mark request as fulfilled
         request.fulfilled = true;
 
-        emit ReplicationCompleted(root, newNodeAddresses.length);
+        emit ReplicationCompleted(root, uniqueNodes.length);
     }
 
     // View functions

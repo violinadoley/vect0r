@@ -6,14 +6,14 @@ export const config = {
   // Server Configuration
   port: parseInt(process.env.PORT || '3000'),
   nodeEnv: process.env.NODE_ENV || 'development',
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3001',
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
 
   // 0G Network Configuration
   zg: {
-    chainRpcUrl: process.env.ZG_CHAIN_RPC_URL || 'https://evmrpc-testnet.0g.ai',
-    storageUrl: process.env.ZG_STORAGE_URL || 'https://storage-testnet.0g.ai',
-    indexerUrl: process.env.ZG_INDEXER_URL || 'https://indexer-storage-testnet-turbo.0g.ai',
-    chainId: parseInt(process.env.ZG_CHAIN_ID || '16602'),
+    chainRpcUrl: process.env.ZG_CHAIN_RPC_URL || 'https://evmrpc.0g.ai',
+    storageUrl: process.env.ZG_STORAGE_URL || 'https://storage.0g.ai',
+    indexerUrl: process.env.ZG_INDEXER_URL || 'https://indexer-storage.0g.ai',
+    chainId: parseInt(process.env.ZG_CHAIN_ID || '16661'),
     privateKey: process.env.PRIVATE_KEY || '',
   },
 

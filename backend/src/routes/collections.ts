@@ -97,6 +97,8 @@ export async function collectionRoutes(
       const collections = allCollections.filter((c: any) => 
         c.name.toLowerCase() !== 'default'
       );
+      // Sort by created date descending (newest first)
+      collections.sort((a: any, b: any) => b.created - a.created);
       reply.send({ success: true, collections });
     } catch (error) {
       reply.status(500).send({ error: `Failed to list collections: ${error}` });

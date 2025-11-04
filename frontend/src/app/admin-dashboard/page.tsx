@@ -188,7 +188,10 @@ export default function AdminDashboard() {
           return true // Include collections without owner info
         })
         
-        setCollections(filteredCollections)
+        // Sort by created date descending (newest first)
+        const sortedCollections = filteredCollections.sort((a, b) => b.created - a.created)
+        
+        setCollections(sortedCollections)
       }
     } catch (err) {
       console.error('Error fetching collections:', err)
@@ -215,6 +218,7 @@ export default function AdminDashboard() {
     setCurrentSection('vectors')
     await fetchCollectionVectors(collection.id)
   }
+
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
@@ -982,77 +986,75 @@ export default function AdminDashboard() {
                           </div>
                         </div>
 
-                        {/* Blockchain Info */}
-                        <div className="space-y-2 mb-4 p-4 rounded-lg bg-black/20 border border-white/10">
-                          <p className="text-xs font-semibold text-indigo-300 mb-2">⛓️ Blockchain Data</p>
-                          
-                          {collection.owner && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-400">Owner:</span>
-                              <button
-                                onClick={() => copyToClipboard(collection.owner!, 'owner')}
-                                className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
-                                title={collection.owner}
-                              >
-                                {truncateHash(collection.owner)}
-                                {copiedText === 'owner' && <span className="ml-2 text-green-400">✓</span>}
-                              </button>
-                            </div>
-                          )}
+                        {/* Blockchain Info - Only show if blockchain data exists */}
+                        {(collection.owner || collection.txHash || collection.blockNumber || collection.blockHash || collection.storageRoot) && (
+                          <div className="space-y-2 mb-4 p-4 rounded-lg bg-black/20 border border-white/10">
+                            <p className="text-xs font-semibold text-indigo-300 mb-2">⛓️ Blockchain Data</p>
+                            
+                            {collection.owner && (
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-400">Owner:</span>
+                                <button
+                                  onClick={() => copyToClipboard(collection.owner!, 'owner')}
+                                  className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
+                                  title={collection.owner}
+                                >
+                                  {truncateHash(collection.owner)}
+                                  {copiedText === 'owner' && <span className="ml-2 text-green-400">✓</span>}
+                                </button>
+                              </div>
+                            )}
 
-                          {collection.txHash && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-400">Tx Hash:</span>
-                              <button
-                                onClick={() => copyToClipboard(collection.txHash!, 'tx')}
-                                className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
-                                title={collection.txHash}
-                              >
-                                {truncateHash(collection.txHash)}
-                                {copiedText === 'tx' && <span className="ml-2 text-green-400">✓</span>}
-                              </button>
-                            </div>
-                          )}
+                            {collection.txHash && (
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-400">Tx Hash:</span>
+                                <button
+                                  onClick={() => copyToClipboard(collection.txHash!, 'tx')}
+                                  className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
+                                  title={collection.txHash}
+                                >
+                                  {truncateHash(collection.txHash)}
+                                  {copiedText === 'tx' && <span className="ml-2 text-green-400">✓</span>}
+                                </button>
+                              </div>
+                            )}
 
-                          {collection.blockNumber && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-400">Block:</span>
-                              <span className="text-xs font-mono text-white">#{collection.blockNumber.toLocaleString()}</span>
-                            </div>
-                          )}
+                            {collection.blockNumber && (
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-400">Block:</span>
+                                <span className="text-xs font-mono text-white">#{collection.blockNumber.toLocaleString()}</span>
+                              </div>
+                            )}
 
-                          {collection.blockHash && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-400">Block Hash:</span>
-                              <button
-                                onClick={() => copyToClipboard(collection.blockHash!, 'block')}
-                                className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
-                                title={collection.blockHash}
-                              >
-                                {truncateHash(collection.blockHash)}
-                                {copiedText === 'block' && <span className="ml-2 text-green-400">✓</span>}
-                              </button>
-                            </div>
-                          )}
+                            {collection.blockHash && (
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-400">Block Hash:</span>
+                                <button
+                                  onClick={() => copyToClipboard(collection.blockHash!, 'block')}
+                                  className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
+                                  title={collection.blockHash}
+                                >
+                                  {truncateHash(collection.blockHash)}
+                                  {copiedText === 'block' && <span className="ml-2 text-green-400">✓</span>}
+                                </button>
+                              </div>
+                            )}
 
-                          {collection.storageRoot && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-400">Storage Root:</span>
-                              <button
-                                onClick={() => copyToClipboard(collection.storageRoot!, 'storage')}
-                                className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
-                                title={collection.storageRoot}
-                              >
-                                {truncateHash(collection.storageRoot)}
-                                {copiedText === 'storage' && <span className="ml-2 text-green-400">✓</span>}
-                              </button>
-                            </div>
-                          )}
-
-                          {!collection.owner && !collection.txHash && (
-                            <p className="text-xs text-gray-500 italic">No blockchain data available</p>
-                          )}
-                        </div>
+                            {collection.storageRoot && (
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-400">Storage Root:</span>
+                                <button
+                                  onClick={() => copyToClipboard(collection.storageRoot!, 'storage')}
+                                  className="text-xs font-mono text-white hover:text-indigo-400 transition-colors"
+                                  title={collection.storageRoot}
+                                >
+                                  {truncateHash(collection.storageRoot)}
+                                  {copiedText === 'storage' && <span className="ml-2 text-green-400">✓</span>}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )}
 
                         {/* Actions */}
                         <div className="flex space-x-2">

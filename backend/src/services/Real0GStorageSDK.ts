@@ -15,11 +15,15 @@ export class Real0GStorageSDK implements IStorageService {
   private indexer: Indexer;
   
   // Official 0G Network endpoints from documentation
-  private readonly RPC_URL = 'https://evmrpc-testnet.0g.ai/';
-  private readonly INDEXER_RPC = 'https://indexer-storage-testnet-turbo.0g.ai';
+  private readonly RPC_URL: string;
+  private readonly INDEXER_RPC: string;
 
   constructor() {
-    // Initialize provider using official testnet RPC
+    // Use config values for mainnet/testnet
+    this.RPC_URL = config.zg.chainRpcUrl;
+    this.INDEXER_RPC = config.zg.indexerUrl;
+    
+    // Initialize provider using configured RPC
     this.provider = new ethers.JsonRpcProvider(this.RPC_URL);
     
     // Initialize signer if private key is available
@@ -68,7 +72,7 @@ export class Real0GStorageSDK implements IStorageService {
       console.log(`🌳 Generated Merkle root hash: ${rootHash}`);
 
       // Step 4: Upload to 0G Network using official SDK
-      console.log(`🚀 Uploading to 0G Storage Network...`);
+      console.log(`🚀 Uploading to 0G Storage Network (${this.RPC_URL.includes('testnet') ? 'TESTNET' : 'MAINNET'})...`);
       const [tx, uploadErr] = await this.indexer.upload(file, this.RPC_URL, this.signer);
       
       if (uploadErr !== null) {
@@ -88,7 +92,7 @@ export class Real0GStorageSDK implements IStorageService {
         storageProof: '0g-network',
         distributionNodes: ['0g-storage-network'],
         filename,
-        network: 'testnet'
+        network: (this.RPC_URL.includes('evmrpc.0g.ai') || config.zg.chainId === 16661) ? 'mainnet' : 'testnet'
       };
 
       console.log(`✅ Successfully uploaded ${filename} to 0G Storage Network!`);
@@ -97,15 +101,9 @@ export class Real0GStorageSDK implements IStorageService {
       
       return result;
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error uploading to 0G Storage:', error);
-      
-      // Store locally if 0G network fails
-      console.warn('🔄 Storing locally (0G network unavailable)...');
-      return this.localStorageUpload(
-        Buffer.isBuffer(data) ? data : Buffer.from(data), 
-        filename
-      );
+      throw new Error(`Failed to upload to 0G Storage Network: ${error.message || error}`);
     }
   }
 
@@ -177,12 +175,9 @@ export class Real0GStorageSDK implements IStorageService {
       
       return data;
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error downloading from 0G Storage:', error);
-      
-      // Try local storage
-      console.warn('🔄 Attempting local storage download...');
-      return this.localStorageDownload(rootHash);
+      throw new Error(`Failed to download from 0G Storage Network: ${error.message || error}`);
     }
   }
 
@@ -252,12 +247,13 @@ export class Real0GStorageSDK implements IStorageService {
    */
   async getNetworkStatus(): Promise<any> {
     try {
+      const networkLabel = (this.RPC_URL.includes('evmrpc.0g.ai') || config.zg.chainId === 16661) ? 'mainnet' : 'testnet';
       return {
         indexerEndpoint: this.INDEXER_RPC,
         rpcEndpoint: this.RPC_URL,
         walletConnected: !!this.signer,
         walletAddress: this.signer?.address || null,
-        network: 'testnet'
+        network: networkLabel
       };
     } catch (error: any) {
       return { error: error.message };
@@ -296,42 +292,4 @@ export class Real0GStorageSDK implements IStorageService {
     }
   }
 
-  // Local storage methods (when 0G network is unavailable)
-  private async localStorageUpload(dataBuffer: Buffer, filename: string): Promise<any> {
-    const storageDir = path.join(config.storage.uploadPath, '0g-storage');
-    await fs.ensureDir(storageDir);
-    
-    const root = `0x${Buffer.from(dataBuffer).toString('hex').slice(0, 64)}`;
-    const filePath = path.join(storageDir, `${root}.dat`);
-    const metaPath = path.join(storageDir, `${root}.meta`);
-    
-    await fs.writeFile(filePath, dataBuffer);
-    await fs.writeFile(metaPath, JSON.stringify({
-      root,
-      filename,
-      size: dataBuffer.length,
-      timestamp: Date.now(),
-        storageProof: 'local-storage',
-        note: 'Stored locally (0G network unavailable)'
-    }));
-
-    return {
-      root,
-      size: dataBuffer.length,
-      timestamp: Date.now(),
-      storageProof: 'local-storage',
-      distributionNodes: ['local-node'],
-      filename
-    };
-  }
-
-  private async localStorageDownload(root: string): Promise<Buffer> {
-    const filePath = path.join(config.storage.uploadPath, '0g-storage', `${root}.dat`);
-    
-    if (await fs.pathExists(filePath)) {
-      return await fs.readFile(filePath);
-    } else {
-      throw new Error(`File not found in local fallback storage: ${root}`);
-    }
-  }
 }

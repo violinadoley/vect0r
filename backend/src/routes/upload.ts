@@ -4,6 +4,7 @@ import { VectorEngine } from '../core/VectorEngine';
 import { EmbeddingService } from '../services/EmbeddingService';
 import { IStorageService } from '../services/StorageInterface';
 import { DocumentProcessingService, ChunkingStrategy, UploadedFile } from '../services/DocumentProcessingService';
+import { VectorRegistryService } from '../services/VectorRegistryService';
 
 interface UploadRequest {
   collectionName?: string;
@@ -175,6 +176,28 @@ export async function uploadRoutes(
             }
           );
           vectorIds.push(vectorId);
+        }
+      }
+
+      // Update blockchain with new vector count
+      // This ensures the blockchain reflects the actual vector count even after server restarts
+      const collection = vectorEngine.getCollection(collectionId);
+      if (collection && vectorIds.length > 0) {
+        try {
+          const vectorRegistryService = new VectorRegistryService();
+          if (vectorRegistryService.isConfigured()) {
+            // Update blockchain with current vector count (storage root can be empty, updated later if needed)
+            await vectorRegistryService.updateCollection(
+              collectionId,
+              '', // Empty storage root for now - can be updated when syncing to 0G Storage
+              collection.count, // Updated count from local memory
+              undefined // metadataHash will be auto-generated
+            );
+            console.log(`✅ Updated blockchain: collection ${collectionId} now has ${collection.count} vectors`);
+          }
+        } catch (blockchainError) {
+          console.error('⚠️ Failed to update blockchain vector count:', blockchainError);
+          // Don't fail the request if blockchain update fails - data is still stored locally
         }
       }
 

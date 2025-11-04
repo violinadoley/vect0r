@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# env
+*.env
+!.env.example
+
+# logs
+npm-debug.log*
+yarn-error.log
+
+# backend
+backend/dist/
+backend/uploads/*
+!backend/uploads/.gitkeep
+!backend/uploads/**/.gitkeep
+
+# frontend
+frontend/.next/
+frontend/out/
+
+# contracts (Hardhat)
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+contracts/deployments/*
+!contracts/deployments/.gitkeep
+
+# misc
+.DS_Store

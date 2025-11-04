@@ -34,7 +34,6 @@ contract VectorRegistry is AccessControl, ReentrancyGuard, Pausable {
         string storageHash; // 0G Storage hash for vector data
         uint256 timestamp;
         bytes32 contentHash; // Hash of vector content for integrity
-        mapping(string => string) attributes; // Custom metadata attributes
     }
 
     // Storage
@@ -43,6 +42,7 @@ contract VectorRegistry is AccessControl, ReentrancyGuard, Pausable {
     mapping(address => string[]) public userCollections;
     mapping(string => address[]) public collectionUsers;
     mapping(string => mapping(address => bool)) public collectionAccess;
+    mapping(string => mapping(string => string)) public vectorAttributes; // vectorKey -> key -> value
     
     string[] public collectionIds;
     uint256 public totalCollections;
@@ -179,7 +179,12 @@ contract VectorRegistry is AccessControl, ReentrancyGuard, Pausable {
         if (vectorCount > collection.vectorCount) {
             totalVectors += vectorDiff;
         } else {
-            totalVectors -= vectorDiff;
+            // Prevent underflow
+            if (vectorDiff > totalVectors) {
+                totalVectors = 0;
+            } else {
+                totalVectors -= vectorDiff;
+            }
         }
 
         collection.storageRoot = storageRoot;
@@ -243,6 +248,7 @@ contract VectorRegistry is AccessControl, ReentrancyGuard, Pausable {
         address user
     ) external whenNotPaused collectionExists(collectionId) onlyCollectionOwner(collectionId) {
         require(user != address(0), "VectorRegistry: Invalid user address");
+        require(!collectionAccess[collectionId][user], "VectorRegistry: User already has access");
         
         collectionAccess[collectionId][user] = true;
         collectionUsers[collectionId].push(user);
@@ -278,7 +284,7 @@ contract VectorRegistry is AccessControl, ReentrancyGuard, Pausable {
         string memory value
     ) external whenNotPaused collectionExists(collectionId) hasCollectionAccess(collectionId) {
         string memory vectorKey = string(abi.encodePacked(collectionId, ":", vectorId));
-        vectorMetadata[vectorKey].attributes[key] = value;
+        vectorAttributes[vectorKey][key] = value;
     }
 
     // View functions
@@ -321,7 +327,7 @@ contract VectorRegistry is AccessControl, ReentrancyGuard, Pausable {
         string memory key
     ) external view returns (string memory) {
         string memory vectorKey = string(abi.encodePacked(collectionId, ":", vectorId));
-        return vectorMetadata[vectorKey].attributes[key];
+        return vectorAttributes[vectorKey][key];
     }
 
     /**

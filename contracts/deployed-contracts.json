@@ -1,8 +1,0 @@
-{
-  "deployer": "0x24a00018F302Fa2fa523811Aec199D686d653Afc",
-  "contracts": {
-    "VectorRegistry": "0x6ab136BdDDffAC066BBe0Cc226599777B601f775",
-    "StorageOracle": "0x9C4a249A04613651CBa2E33a8FFE316f15B639A8"
-  },
-  "timestamp": "2025-10-19T05:09:32.160Z"
-}

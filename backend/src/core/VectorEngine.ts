@@ -30,6 +30,7 @@ export class VectorEngine {
   private indices: Map<string, any> = new Map();
   private documents: Map<string, Map<string, VectorDocument>> = new Map();
   private collections: Map<string, Collection> = new Map();
+  private deletedCollections: Set<string> = new Set(); // Track deleted collections to prevent re-syncing
   private vectorRegistryService: VectorRegistryService;
   private storageOracleService: StorageOracleService;
 
@@ -122,12 +123,20 @@ export class VectorEngine {
       if (this.vectorRegistryService.isConfigured()) {
         const blockchainCollectionIds = await this.vectorRegistryService.getAllCollections();
         
-        // Sync any missing collections from blockchain
+        // Sync collections from blockchain - both new and existing
+        // Skip collections that have been deleted locally
         for (const collectionId of blockchainCollectionIds) {
-          if (!this.collections.has(collectionId)) {
-            const blockchainCollection = await this.vectorRegistryService.getCollection(collectionId);
-            if (blockchainCollection) {
-              // Create local representation of blockchain collection
+          // Skip if this collection was deleted
+          if (this.deletedCollections.has(collectionId)) {
+            continue;
+          }
+          
+          const blockchainCollection = await this.vectorRegistryService.getCollection(collectionId);
+          if (blockchainCollection) {
+            const existingCollection = this.collections.get(collectionId);
+            
+            if (!existingCollection) {
+              // Create new collection from blockchain
               const localCollection: Collection = {
                 id: collectionId,
                 name: blockchainCollection.name,
@@ -145,7 +154,24 @@ export class VectorEngine {
               this.documents.set(collectionId, new Map());
               this.collections.set(collectionId, localCollection);
               
-              console.log(`📥 Synced collection from blockchain: ${blockchainCollection.name} (${collectionId})`);
+              console.log(`📥 Synced new collection from blockchain: ${blockchainCollection.name} (${collectionId})`);
+            } else {
+              // Update existing collection with blockchain data (especially vectorCount)
+              // Use the maximum of local count and blockchain count to handle sync issues
+              const localVectorCount = this.getCollectionVectorCount(collectionId);
+              const blockchainVectorCount = blockchainCollection.vectorCount;
+              
+              // Update count to use blockchain count if it's higher, or keep local if vectors exist
+              // This handles the case where blockchain was updated but local was reset
+              existingCollection.count = Math.max(localVectorCount, blockchainVectorCount);
+              existingCollection.name = blockchainCollection.name; // Update name in case it changed
+              existingCollection.updated = blockchainCollection.updatedAt * 1000;
+              
+              // If blockchain count is higher, it means vectors were added but lost on restart
+              // This is expected behavior - vectors are in-memory only
+              if (blockchainVectorCount > localVectorCount) {
+                console.log(`📊 Collection ${collectionId}: Blockchain shows ${blockchainVectorCount} vectors, but local has ${localVectorCount} (vectors lost on restart - need to re-upload)`);
+              }
             }
           }
         }
@@ -314,7 +340,9 @@ export class VectorEngine {
                    this.documents.delete(collectionId);
 
     if (deleted) {
-      console.log(`Deleted collection ${collectionId}`);
+      // Mark as deleted to prevent re-syncing from blockchain
+      this.deletedCollections.add(collectionId);
+      console.log(`🗑️ Deleted collection ${collectionId} (marked to prevent re-sync)`);
     }
 
     return deleted;

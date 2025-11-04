@@ -1,5 +1,6 @@
 import axios from 'axios';
-import crypto from 'crypto-js';
+import { v4 as uuidv4 } from 'uuid';
+import { config } from '../config';
 
 export interface EmbeddingRequest {
   text: string;
@@ -26,36 +27,79 @@ export interface DocumentChunk {
  * Supports various embedding models and chunking strategies
  */
 export class EmbeddingService {
-  private defaultModel: string = 'all-MiniLM-L6-v2';
+  private defaultModel: string = 'text-embedding-004'; // Google's embedding model
   private maxTokens: number = 512;
   private chunkOverlap: number = 50;
+  private apiKey: string;
+  private apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
 
   constructor() {
-    console.log('Embedding Service initialized');
-    console.log(`Default model: ${this.defaultModel}`);
+    this.apiKey = config.gemini.apiKey;
+    if (!this.apiKey) {
+      console.warn('⚠️ EmbeddingService initialized without API key - embedding generation will fail');
+    } else {
+      console.log('Embedding Service initialized');
+      console.log(`Default model: ${this.defaultModel}`);
+    }
   }
 
   /**
-   * Generate embedding for a single text
+   * Generate embedding for a single text using Google's Embedding API
    */
   async generateEmbedding(text: string, model?: string): Promise<EmbeddingResponse> {
+    if (!this.apiKey) {
+      throw new Error('Gemini API key not configured. Set GEMINI_API_KEY environment variable.');
+    }
+
     try {
       const modelName = model || this.defaultModel;
       
-      // For demo purposes, we'll create a simple deterministic embedding
-      // In production, this would call an actual embedding API like OpenAI, Hugging Face, or local model
-      const vector = this.createDeterministicEmbedding(text);
+      console.log(`🧮 Generating embedding using ${modelName}...`);
+      
+      // Call Google's Embedding API
+      const response = await axios.post(
+        `${this.apiUrl}/${modelName}:embedContent?key=${this.apiKey}`,
+        {
+          content: {
+            parts: [{ text }]
+          }
+        },
+        {
+          timeout: 30000,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.data.embedding || !response.data.embedding.values) {
+        throw new Error('Invalid response from embedding API');
+      }
+
+      const vector = response.data.embedding.values;
+      const tokens = response.data.usageMetadata?.totalTokenCount || this.estimateTokens(text);
+      
+      console.log(`✅ Generated embedding (${vector.length} dimensions, ${tokens} tokens)`);
       
       return {
         vector,
         dimension: vector.length,
         model: modelName,
-        tokens: this.estimateTokens(text),
+        tokens,
       };
 
-    } catch (error) {
-      console.error('Error generating embedding:', error);
-      throw new Error(`Failed to generate embedding: ${error}`);
+    } catch (error: any) {
+      console.error('❌ Error generating embedding:', error.response?.data || error.message);
+      
+      if (error.response?.status === 429) {
+        throw new Error('Rate limit exceeded. Please try again later.');
+      } else if (error.response?.status === 400) {
+        throw new Error('Invalid request to embedding API. Check your text length.');
+      } else if (error.response?.status === 403) {
+        throw new Error('Invalid API key or embedding API not enabled.');
+      }
+      
+      throw new Error(`Failed to generate embedding: ${error.message || error}`);
     }
   }
 
@@ -123,7 +167,7 @@ export class EmbeddingService {
       if (potentialChunk.length > chunkSize && currentChunk.length > 0) {
         // Create chunk
         chunks.push({
-          id: crypto.lib.WordArray.random(16).toString(),
+          id: uuidv4(),
           text: currentChunk.trim(),
           metadata: {
             chunkIndex: chunks.length,
@@ -148,7 +192,7 @@ export class EmbeddingService {
     // Add final chunk if there's remaining content
     if (currentChunk.trim()) {
       chunks.push({
-        id: crypto.lib.WordArray.random(16).toString(),
+        id: uuidv4(),
         text: currentChunk.trim(),
         metadata: {
           chunkIndex: chunks.length,
@@ -180,32 +224,6 @@ export class EmbeddingService {
     return lastSpaceIndex > 0 ? overlap.slice(lastSpaceIndex + 1) : overlap;
   }
 
-  /**
-   * Create a deterministic embedding from text
-   * This is a simplified approach for demo purposes
-   */
-  private createDeterministicEmbedding(text: string): number[] {
-    const dimension = 768; // Standard dimension for many models
-    const vector: number[] = new Array(dimension);
-    
-    // Create a hash of the text
-    const hash = crypto.SHA256(text).toString();
-    
-    // Use the hash to generate deterministic values
-    for (let i = 0; i < dimension; i++) {
-      const seedValue = parseInt(hash.slice(i * 2 % hash.length, (i * 2 + 2) % hash.length), 16) || 0;
-      // Convert to normalized value between -1 and 1
-      vector[i] = (seedValue / 255) * 2 - 1;
-    }
-    
-    // Normalize the vector
-    const magnitude = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
-    for (let i = 0; i < dimension; i++) {
-      vector[i] /= magnitude;
-    }
-    
-    return vector;
-  }
 
   private estimateTokens(text: string): number {
     // Rough estimation: ~4 characters per token for English text

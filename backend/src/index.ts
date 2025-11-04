@@ -52,6 +52,7 @@ class VectorZeroServer {
     this.fastify.register(cors, {
       origin: config.corsOrigin,
       credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     });
 
     // Add request logging

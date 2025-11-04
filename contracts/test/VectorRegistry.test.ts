@@ -96,6 +96,35 @@ describe("VectorRegistry", function () {
       expect(collection.metadataHash).to.equal(metadataHash);
     });
 
+    it("Should prevent underflow when reducing vectors below zero", async function () {
+      await vectorRegistry.connect(user1).createCollection(
+        "test-collection",
+        "Test Collection",
+        "A test collection",
+        768,
+        true
+      );
+
+      // First update with some vectors
+      await vectorRegistry.connect(user1).updateCollection(
+        "test-collection",
+        "0x1111",
+        5,
+        ethers.keccak256(ethers.toUtf8Bytes("meta1"))
+      );
+
+      // Now try to reduce to a larger number (simulating underflow scenario)
+      await vectorRegistry.connect(user1).updateCollection(
+        "test-collection",
+        "0x2222",
+        100, // Much larger than 5
+        ethers.keccak256(ethers.toUtf8Bytes("meta2"))
+      );
+
+      const [totalCollections, totalVectors, totalIds] = await vectorRegistry.getStats();
+      expect(totalVectors).to.equal(100);
+    });
+
     it("Should only allow owner to update collection", async function () {
       await vectorRegistry.connect(user1).createCollection(
         "test-collection",
@@ -145,6 +174,14 @@ describe("VectorRegistry", function () {
     it("Should allow owner access to private collection", async function () {
       const hasAccess = await vectorRegistry.hasAccess("private-collection", user1.address);
       expect(hasAccess).to.be.true;
+    });
+
+    it("Should prevent duplicate access grants", async function () {
+      await vectorRegistry.connect(user1).grantAccess("private-collection", user2.address);
+      
+      await expect(
+        vectorRegistry.connect(user1).grantAccess("private-collection", user2.address)
+      ).to.be.revertedWith("VectorRegistry: User already has access");
     });
   });
 

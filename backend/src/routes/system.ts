@@ -87,8 +87,9 @@ export async function systemRoutes(
     });
   });
 
-  // Test embedding generation
-  fastify.post('/test/embedding', async (request: FastifyRequest, reply: FastifyReply) => {
+  // Test embedding generation (development only)
+  if (config.nodeEnv === 'development') {
+    fastify.post('/test/embedding', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { text, model } = request.body as { text: string; model?: string };
 
@@ -113,10 +114,12 @@ export async function systemRoutes(
     } catch (error) {
       reply.status(500).send({ error: `Failed to generate test embedding: ${error}` });
     }
-  });
+    });
+  }
 
-  // Test 0G Storage
-  fastify.post('/test/storage', async (request: FastifyRequest, reply: FastifyReply) => {
+  // Test 0G Storage (development only)
+  if (config.nodeEnv === 'development') {
+    fastify.post('/test/storage', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { data } = request.body as { data: string };
 
@@ -148,10 +151,12 @@ export async function systemRoutes(
     } catch (error) {
       reply.status(500).send({ error: `Failed to test storage: ${error}` });
     }
-  });
+    });
+  }
 
-  // Semantic similarity test
-  fastify.post('/test/similarity', async (request: FastifyRequest, reply: FastifyReply) => {
+  // Semantic similarity test (development only)
+  if (config.nodeEnv === 'development') {
+    fastify.post('/test/similarity', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { text1, text2 } = request.body as { text1: string; text2: string };
 
@@ -183,10 +188,12 @@ export async function systemRoutes(
     } catch (error) {
       reply.status(500).send({ error: `Failed to calculate similarity: ${error}` });
     }
-  });
+    });
+  }
 
-  // Document processing test
-  fastify.post('/test/document', async (request: FastifyRequest, reply: FastifyReply) => {
+  // Document processing test (development only)
+  if (config.nodeEnv === 'development') {
+    fastify.post('/test/document', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { content, chunkSize, metadata } = request.body as {
         content: string;
@@ -221,7 +228,8 @@ export async function systemRoutes(
     } catch (error) {
       reply.status(500).send({ error: `Failed to process document: ${error}` });
     }
-  });
+    });
+  }
 
   // System shutdown (for development)
   if (config.nodeEnv === 'development') {
