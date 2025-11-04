@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: vect0r-backend
+    env: node
+    plan: free
+    rootDir: backend
+    autoDeploy: true
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      # Render injects PORT automatically; the app reads process.env.PORT
+      - key: NODE_ENV
+        value: production
+      - key: ZG_CHAIN_RPC_URL
+        value: https://evmrpc.0g.ai
+      - key: ZG_INDEXER_URL
+        value: https://indexer-storage-turbo.0g.ai
+      - key: ZG_CHAIN_ID
+        value: "16661"
+      # Set sensitive vars in the Render dashboard after first deploy
+      # or replace the value field below before applying the blueprint.
+      - key: PRIVATE_KEY
+        value: "<SET_IN_RENDER_DASHBOARD>"
+      - key: GEMINI_API_KEY
+        value: "<SET_IN_RENDER_DASHBOARD>"
+      - key: VECTOR_REGISTRY_ADDRESS
+        value: 0x796373F5e5879AF43233B378c0425b54797Cf5B9
+      - key: STORAGE_ORACLE_ADDRESS
+        value: 0x52c0088C5b910FE40Cb217CF2d3E779113a0007e
+      - key: UPLOAD_PATH
+        value: /tmp
+      # After the frontend is live, set CORS_ORIGIN to your Vercel domain
+      - key: CORS_ORIGIN
+        value: "https://your-frontend.vercel.app"
+
+
