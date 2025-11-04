@@ -118,57 +118,57 @@ export default function Example() {
         <div className="mx-auto max-w-7xl px-6 py-20 sm:py-28 lg:px-8">
           <div className="max-w-3xl text-left mb-16">
             <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4 font-sans">
-              Why Zero Vector?
+              Why Vect0r?
             </h2>
-            <p className="text-xl text-white leading-relaxed font-mono">
-              The first vector database that puts you in complete control
+            <p className="text-xl text-white font-mono leading-relaxed">
+              The first vector database that puts you in complete control of your data.
             </p>
           </div>
           <div className="grid gap-8 md:gap-12 lg:grid-cols-2">
-            <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:bg-gray-800/60 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-start gap-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-2xl shadow-lg">
+                <div className="h-14 w-14 flex items-center justify-center text-2xl shadow-lg">
                   🔒
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3 font-sans">Truly Decentralized</h3>
-                  <p className="text-white leading-relaxed font-mono">Your data stays under your control. Built on 0G Chain with smart contract governance and distributed storage - no central authority can lock you out.</p>
+                  <p className="text-white/50 font-mono leading-relaxed">Your data stays under your control. Built on 0G Chain with smart contract governance and distributed storage - no central authority can lock you out.</p>
                 </div>
               </div>
             </div>
-            
-            <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:bg-gray-800/60 transition-all duration-300 transform hover:-translate-y-1">
+
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-start gap-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-2xl shadow-lg">
+                <div className="h-14 w-14 flex items-center justify-center text-2xl shadow-lg">
                   ⚡
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3 font-sans">Lightning Fast</h3>
-                  <p className="text-white leading-relaxed font-mono">HNSW indexing delivers millisecond vector search at scale. Handle millions of embeddings with real-time similarity search and batch operations.</p>
+                  <p className="text-white/50 font-mono leading-relaxed">HNSW indexing delivers millisecond vector search at scale. Handle millions of embeddings with real-time similarity search and batch operations.</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:bg-gray-800/60 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-start gap-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-2xl shadow-lg">
+                <div className="h-14 w-14 flex items-center justify-center text-2xl shadow-lg">
                   🚀
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3 font-sans">Developer First</h3>
-                  <p className="text-white leading-relaxed font-mono">RESTful APIs, automatic embedding generation, and intelligent document processing. Get from prototype to production in minutes.</p>
+                  <p className="text-white/50 font-mono leading-relaxed">RESTful APIs, automatic embedding generation, and intelligent document processing. Get from prototype to production in minutes.</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:bg-gray-800/60 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-start gap-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 text-2xl shadow-lg">
+                <div className="h-14 w-14 flex items-center justify-center text-2xl shadow-lg">
                   🌐
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3 font-sans">Zero Vendor Lock-in</h3>
-                  <p className="text-white leading-relaxed font-mono">Deploy anywhere, migrate easily. Open standards and portable infrastructure mean your vector data is never trapped.</p>
+                  <p className="text-white/50 font-mono leading-relaxed">Deploy anywhere, migrate easily. Open standards and portable infrastructure mean your vector data is never trapped.</p>
                 </div>
               </div>
             </div>
@@ -181,48 +181,48 @@ export default function Example() {
             <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4 font-sans">
               Technical Excellence
             </h2>
-            <p className="text-xl text-white leading-relaxed font-mono">
+            <p className="text-xl text-white font-mono leading-relaxed">
               Built for scale, designed for developers
             </p>
           </div>
           <div className="grid gap-8 lg:grid-cols-3 lg:gap-12">
             <div className="group">
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-600/30 rounded-2xl p-8 h-full hover:border-indigo-400/50 transition-all duration-300">
-                <div className="rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 p-4 w-16 h-16 mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 h-full hover:border-indigo-400/50 transition-all duration-300">
+                <div className="rounded-2xl p-4 w-16 h-16 mb-6 group-hover:scale-110 transition-transform duration-300">
                   <svg className="h-8 w-8 text-indigo-300" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0-1.125-.504-1.125-1.125V11.25a9 9 0 00-9-9z" />
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-4 font-sans">Smart Document Processing</h3>
-                <p className="text-white leading-relaxed font-mono">
+                <p className="text-white font-mono leading-relaxed">
                   Multi-format support for PDF, text, and documents. Intelligent chunking strategies and automatic text-to-embedding generation.
                 </p>
               </div>
             </div>
             
             <div className="group">
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-600/30 rounded-2xl p-8 h-full hover:border-emerald-400/50 transition-all duration-300">
-                <div className="rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 p-4 w-16 h-16 mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 h-full hover:border-emerald-400/50 transition-all duration-300">
+                <div className="rounded-2xl p-4 w-16 h-16 mb-6 group-hover:scale-110 transition-transform duration-300">
                   <svg className="h-8 w-8 text-emerald-300" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-4 font-sans">Advanced Vector Operations</h3>
-                <p className="text-white leading-relaxed font-mono">
+                <p className="text-white font-mono leading-relaxed">
                   Configurable vector dimensions, semantic similarity search with filtering, and real-time collection management.
                 </p>
               </div>
             </div>
             
             <div className="group">
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-600/30 rounded-2xl p-8 h-full hover:border-blue-400/50 transition-all duration-300">
-                <div className="rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 p-4 w-16 h-16 mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 h-full hover:border-blue-400/50 transition-all duration-300">
+                <div className="rounded-2xl p-4 w-16 h-16 mb-6 group-hover:scale-110 transition-transform duration-300">
                   <svg className="h-8 w-8 text-blue-300" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-4 font-sans">Blockchain Integration</h3>
-                <p className="text-white leading-relaxed font-mono">
+                <p className="text-white font-mono leading-relaxed">
                   On-chain metadata and access control with immutable collection registry and 0G Network smart contract governance.
                 </p>
               </div>
@@ -236,7 +236,7 @@ export default function Example() {
             <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4 font-sans">
               Built for Modern AI Applications
             </h2>
-            <p className="text-xl text-white leading-relaxed font-mono">
+            <p className="text-xl text-white font-mono leading-relaxed">
               From search to recommendations, power your next AI breakthrough
             </p>
           </div>
@@ -248,7 +248,7 @@ export default function Example() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-white mb-2 font-sans">AI-Powered Search</h3>
-                  <p className="text-white leading-relaxed font-mono">
+                  <p className="text-white font-mono leading-relaxed">
                     Build semantic search across documents, knowledge bases, and content libraries with natural language queries.
                   </p>
                 </div>
@@ -262,7 +262,7 @@ export default function Example() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-white mb-2 font-sans">RAG Applications</h3>
-                  <p className="text-white leading-relaxed font-mono">
+                  <p className="text-white font-mono leading-relaxed">
                     Power chatbots and AI assistants with retrieval-augmented generation using your own knowledge base.
                   </p>
                 </div>
@@ -276,7 +276,7 @@ export default function Example() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-white mb-2 font-sans">Recommendation Systems</h3>
-                  <p className="text-white leading-relaxed font-mono">
+                  <p className="text-white font-mono leading-relaxed">
                     Create intelligent recommendations based on content similarity and user behavior patterns.
                   </p>
                 </div>
@@ -290,21 +290,21 @@ export default function Example() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-white mb-2 font-sans">Document Intelligence</h3>
-                  <p className="text-white leading-relaxed font-mono">
+                  <p className="text-white font-mono leading-relaxed">
                     Process and analyze large document collections with automatic categorization and clustering.
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700/40 rounded-2xl p-6 hover:border-purple-400/50 transition-all duration-300 transform hover:-translate-y-1 md:col-span-2 lg:col-span-1 lg:col-start-1 xl:col-span-2 xl:max-w-md xl:mx-auto">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:border-purple-400/50 transition-all duration-300 transform hover:-translate-y-1 md:col-span-2 lg:col-span-1 lg:col-start-1 xl:col-span-2 xl:max-w-md xl:mx-auto">
               <div className="flex items-start gap-4">
-                <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/30 to-pink-500/30 text-xl border border-purple-400/20">
+                <div className="h-12 w-12 flex items-center justify-center text-xl border border-purple-400/20">
                   🔬
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-white mb-2 font-sans">Research & Analytics</h3>
-                  <p className="text-white leading-relaxed font-mono">
+                  <p className="text-white font-mono leading-relaxed">
                     Search academic papers, research data, and technical documentation with semantic understanding.
                   </p>
                 </div>
