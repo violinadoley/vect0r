@@ -25,8 +25,9 @@ const navigation = [
   { name: 'Settings', href: '#settings', icon: CogIcon, current: false },
 ]
 
-// API configuration  
-const API_BASE_URL = 'http://localhost:3001/api/v1'
+// API configuration
+// Use env var in production; fall back to local during development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api/v1'
 
 // Target wallet address for filtering collections
 const TARGET_WALLET_ADDRESS = '0x24a00018F302Fa2fa523811Aec199D686d653Afc'
@@ -143,8 +144,10 @@ export default function AdminDashboard() {
   const fetchInitialData = async () => {
     setLoading(true)
     try {
-      // First, cleanup default collections
-      await cleanupDefaultCollections()
+      // First, cleanup default collections (only in local dev)
+      if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        await cleanupDefaultCollections()
+      }
       
       // Then fetch data
       await Promise.all([
