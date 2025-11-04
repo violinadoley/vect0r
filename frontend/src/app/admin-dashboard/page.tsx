@@ -444,9 +444,6 @@ export default function AdminDashboard() {
             <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
               <div className="flex flex-shrink-0 items-center px-4">
                 <div className="flex items-center space-x-3">
-                  <div className="h-8 w-8 flex bg-white items-center justify-center">
-                    <ServerIcon className="h-5 w-5 text-black" />
-                  </div>
                   <div>
                     <h1 className="text-lg font-semibold text-white">Vect0r</h1>
                     <p className="text-xs text-gray-400">Admin Dashboard</p>
