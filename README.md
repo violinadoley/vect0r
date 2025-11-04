@@ -597,8 +597,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Built with ❤️ for the decentralized future**
-
-[⬆ Back to Top](#Vect0r-)
+**Built with 💙 for the decentralized future**
 
 </div>
