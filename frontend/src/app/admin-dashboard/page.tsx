@@ -961,7 +961,7 @@ export default function AdminDashboard() {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                  <div className="grid grid-cols-1">
                     {collections.map((collection) => (
                       <div key={collection.id} className="rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-6 shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300">
                         {/* Header */}
