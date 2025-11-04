@@ -961,16 +961,16 @@ export default function AdminDashboard() {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1">
+                  <div className="grid grid-cols-1 gap-2">
                     {collections.map((collection) => (
-                      <div key={collection.id} className="rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-6 shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300">
+                      <div key={collection.id} className="bg-black backdrop-blur-xl border border-white/20 p-6 shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300">
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center space-x-3">
                             <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
                               <FolderIcon className="h-6 w-6 text-white" />
                             </div>
-                            <div>
+                            <div >
                               <h3 className="text-lg font-bold text-white">{collection.name}</h3>
                               <p className="text-xs text-white">Created {getTimeAgo(collection.created)}</p>
                             </div>
@@ -986,11 +986,11 @@ export default function AdminDashboard() {
 
                         {/* Stats Grid */}
                         <div className="grid grid-cols-2 gap-3 mb-4">
-                          <div className="rounded-lg bg-white/5 border border-white/10 p-3">
+                          <div className="rounded-lg bg-white/5 flex flex-row justify-between border border-white/10 p-3">
                             <p className="text-xs text-white mb-1">Vectors</p>
                             <p className="text-xl font-bold text-white">{collection.count.toLocaleString()}</p>
                           </div>
-                          <div className="rounded-lg bg-white/5 border border-white/10 p-3">
+                          <div className="rounded-lg bg-white/5 flex flex-row justify-between border border-white/10 p-3">
                             <p className="text-xs text-white mb-1">Dimension</p>
                             <p className="text-xl font-bold text-white">{collection.dimension}d</p>
                           </div>
