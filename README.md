@@ -90,6 +90,8 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 
 ##  Architecture
 
+![Alt text](./architectureDiagram.png)
+
 Vect0r consists of three main components:
 
 ### Component Overview
