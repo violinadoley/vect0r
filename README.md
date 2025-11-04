@@ -2,9 +2,11 @@
 
 <div align="center">
 
-**The First Decentralized  Database on 0G Network**
+### **The First Decentralized Vector Database on the 0G Network**
 
-Store, search, and scale your AI embeddings with blockchain-powered security. No vendor lock-in, complete data sovereignty.
+Store, search, and scale AI embeddings with **blockchain-powered security**, **no vendor lock-in**, and **complete data sovereignty.**
+
+<br>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
@@ -14,7 +16,7 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 
 ---
 
-##  Table of Contents
+## **Table of Contents**
 
 - [Overview](#overview)
 - [Features](#features)
@@ -31,341 +33,217 @@ Store, search, and scale your AI embeddings with blockchain-powered security. No
 
 ---
 
-##  Overview
+## **Overview**
 
-**Vect0r** is a production-ready, decentralized  database built on the 0G Network. It provides a complete solution for storing, indexing, and searching  embeddings with blockchain-powered security and transparency. The platform enables developers to build AI-powered applications without vendor lock-in, leveraging decentralized storage and on-chain metadata management.
+**Vect0r** is a decentralized vector database built on the **0G Network** for storing, indexing, and retrieving embeddings at scale. Designed for AI-first applications, it ensures **security**, **transparency**, and **zero vendor lock-in**.
 
-### Key Value Propositions
-
--  **Decentralized & Secure**: Data stored on 0G Storage with blockchain integrity verification
--  **High Performance**: Optimized HNSW (Hierarchical Navigable Small World) index for fast similarity search
--  **AI-Optimized**: Built-in support for embeddings, RAG (Retrieval Augmented Generation), and semantic search
--  **No Vendor Lock-in**: Deploy anywhere, migrate easily - your data remains under your control
--  **Cost-Effective**: Leverage decentralized infrastructure for reduced operational costs
--  **Real-time**: Instant synchronization across the decentralized network
-
----
-
-##  Features
-
-### Core Functionality
-
-- **Document Processing**
-  - Upload and process documents (PDF, TXT, and more)
-  - Intelligent chunking strategies (fixed-size, sentence-based, paragraph-based)
-  - Automatic text extraction and preprocessing
-
-- ** Operations**
-  - Generate embeddings using state-of-the-art models
-  - Create and manage  collections
-  - High-performance similarity search using HNSW algorithm
-  - Configurable  dimensions (default: 768)
-
-- **RAG (Retrieval Augmented Generation)**
-  - Integrated RAG pipeline with Google Gemini AI
-  - Semantic search with automatic context retrieval
-  - Source citation and metadata tracking
-
-- **Decentralized Storage**
-  - Automatic backup to 0G Storage Network
-  - Blockchain-based metadata registry
-  - Integrity verification and redundancy management
-
-- **Smart Contract Integration**
-  - On-chain collection metadata
-  - Access control and governance
-  - Transparent audit trail
-
-### Advanced Features
-
-- **Multi-format Support**: PDF, TXT, and extensible document formats
-- **Flexible Chunking**: Multiple chunking strategies for optimal document processing
-- **RESTful API**: Comprehensive API for programmatic access
-- **Web Dashboard**: Intuitive admin interface for management and monitoring
-- **Real-time Stats**: System statistics and collection metrics
-- **CORS Support**: Cross-origin resource sharing for web applications
+### **Key Value Propositions**
+- **Decentralized & Secure** — On-chain metadata + 0G Storage integrity verification  
+- **High Performance** — HNSW-based similarity search for low-latency retrieval  
+- **AI-Native** — Integrated RAG pipelines and semantic search  
+- **No Vendor Lock-in** — Your data remains sovereign and portable  
+- **Cost-Efficient** — Leverages decentralized infrastructure to reduce operational overhead  
+- **Real-Time Sync** — Instant state consistency across the network  
 
 ---
 
-##  Architecture
+## **Features**
 
-![Alt text](./architectureDiagram.png)
+### **Core**
+- Document processing (PDF, TXT, etc.)
+- Intelligent chunking (fixed, sentence, paragraph)
+- Embedding generation (state-of-the-art models)
+- High-performance HNSW similarity search
+- Configurable vector dimensions (default: 768)
 
-Vect0r consists of three main components:
+### **RAG**
+- Built-in Retrieval Augmented Generation pipeline
+- Google Gemini API integration
+- Automatic context selection & metadata tracking
 
-### Component Overview
+### **Decentralized Storage**
+- Automatic backup to **0G Storage Network**
+- Blockchain-backed metadata and auditability
+- Redundancy and integrity guarantees
 
-1. **Frontend**: Next.js-based web application with React, TypeScript, and Tailwind CSS
-2. **Backend**: Fastify REST API with TypeScript, handling all business logic
-3. **Smart Contracts**: Solidity contracts deployed on 0G Chain for on-chain metadata and governance
+### **Smart Contract Layer**
+- On-chain collection registry
+- Access governance mechanisms
+- Transparent data lineage
 
 ---
 
-##  Tech Stack
+## **Architecture**
+
+![Architecture Diagram](./architectureDiagram.png)
+
+### Components
+1. **Frontend** — Next.js dashboard  
+2. **Backend** — Fastify REST API service  
+3. **Smart Contracts** — Solidity contracts on 0G Chain  
+
+---
+
+## **Tech Stack**
+
+**Backend**
+- Node.js 20.x
+- Fastify 5.6
+- TypeScript 5.9
+- HNSWlib for vector indexing
+- Google Gemini + all-MiniLM-L6-v2 embeddings
+- Ethers.js + 0G TS SDK
+- 0G Storage Network
+
+**Frontend**
+- Next.js 15.5
+- React 19.1
+- Tailwind CSS 4
+- Heroicons
+- Axios
+
+**Smart Contracts**
+- Solidity 0.8.27
+- Hardhat 2.26
+- OpenZeppelin 5.4
+- Network: 0G Chain (EVM-compatible)
+
+---
+
+## **Prerequisites**
+
+- `Node.js` ≥ 20.x  
+- `npm` ≥ 9.x  
+- Git  
+- Access to 0G network (mainnet or testnet)  
+- API Keys:
+  - Google Gemini
+  - 0G Network private key
+
+---
+
+## **Installation**
+
+```bash
+git clone <repository-url>
+cd og-wave-hack
+```
 
 ### Backend
-- **Runtime**: Node.js 20.x
-- **Framework**: Fastify 5.6
-- **Language**: TypeScript 5.9
-- ** Database**: HNSWlib (Hierarchical Navigable Small World)
-- **AI/ML**: 
-  - Google Gemini API (for RAG)
-  - Embedding models (all-MiniLM-L6-v2)
-- **Blockchain**: 
-  - Ethers.js 6.13
-  - 0G Labs SDK (@0glabs/0g-ts-sdk)
-- **Storage**: 0G Storage Network (decentralized)
-- **Document Processing**: pdf-parse, custom chunking strategies
-
-### Frontend
-- **Framework**: Next.js 15.5
-- **UI Library**: React 19.1
-- **Styling**: Tailwind CSS 4
-- **Icons**: Heroicons
-- **HTTP Client**: Axios
-
-### Smart Contracts
-- **Language**: Solidity 0.8.27
-- **Framework**: Hardhat 2.26
-- **Libraries**: OpenZeppelin Contracts 5.4
-- **Network**: 0G Chain (EVM-compatible)
-
----
-
-##  Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js** 20.x or higher
-- **npm** 9.x or higher (comes with Node.js)
-- **Git** for version control
-- **0G Network Access**: Mainnet or testnet credentials
-- **API Keys**:
-  - Google Gemini API key (for RAG functionality)
-  - 0G Network private key (for blockchain interactions)
-
----
-
-##  Installation
-
-### 1. Clone the Repository
-
-\`\`\`bash
-git clone <repository-url>
-cd og-wave-hack\ copy
-\`\`\`
-
-### 2. Install Backend Dependencies
-
-\`\`\`bash
+```bash
 cd backend
 npm install
-\`\`\`
+```
 
-### 3. Install Frontend Dependencies
-
-\`\`\`bash
+### Frontend
+```bash
 cd ../frontend
 npm install
-\`\`\`
+```
 
-### 4. Install Contract Dependencies
-
-\`\`\`bash
+### Contracts
+```bash
 cd ../contracts
 npm install
-\`\`\`
+```
 
 ---
 
-##  Configuration
+## **Configuration**
 
-### Backend Configuration
-
-Create a \`.env\` file in the \`backend/\` directory:
-
-\`\`\`env
-# Server Configuration
+### Backend `.env`
+```env
 PORT=3001
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:3000
 
-# 0G Network Configuration
 ZG_CHAIN_RPC_URL=https://evmrpc.0g.ai
 ZG_INDEXER_URL=https://indexer-storage-turbo.0g.ai
 ZG_CHAIN_ID=16661
-PRIVATE_KEY=your_0g_private_key_here
+PRIVATE_KEY=your_0g_private_key
 
-# Smart Contract Addresses (Mainnet)
-_REGISTRY_ADDRESS=0x796373F5e5879AF43233B378c0425b54797Cf5B9
+REGISTRY_ADDRESS=0x796373F5e5879AF43233B378c0425b54797Cf5B9
 STORAGE_ORACLE_ADDRESS=0x52c0088C5b910FE40Cb217CF2d3E779113a0007e
 
-# AI/ML Configuration
-GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_API_KEY=your_gemini_api_key
 
-# Storage Configuration
 UPLOAD_PATH=./uploads
-MAX_FILE_SIZE=50MB
+DIMENSION=768
+```
 
-#  Database Configuration (Optional)
-_DIMENSION=768
-HNSW_M=16
-HNSW_EF_CONSTRUCTION=200
-HNSW_EF_SEARCH=50
-\`\`\`
-
-### Frontend Configuration
-
-Create a \`.env.local\` file in the \`frontend/\` directory:
-
-\`\`\`env
+### Frontend `.env.local`
+```env
 NEXT_PUBLIC_API_BASE=http://localhost:3001/api/v1
-\`\`\`
+```
 
-### Contract Configuration
-
-Create a \`.env\` file in the \`contracts/\` directory:
-
-\`\`\`env
-PRIVATE_KEY=your_0g_private_key_here
+### Contracts `.env`
+```env
+PRIVATE_KEY=your_0g_private_key
 ZG_CHAIN_RPC_URL=https://evmrpc.0g.ai
-ZG_EXPLORER_API_KEY=your_explorer_api_key
-ZG_EXPLORER_API_URL=https://chainscan.0g.ai/api
-ZG_EXPLORER_URL=https://chainscan.0g.ai
-\`\`\`
+ZG_EXPLORER_API_KEY=your_api_key
+```
 
 ---
 
-##  Usage
+## **Usage**
 
-### Starting the Development Server
-
-#### Backend
-
-\`\`\`bash
+### Run Backend
+```bash
 cd backend
 npm run dev
-\`\`\`
+```
+→ http://localhost:3001
 
-The backend API will be available at \`http://localhost:3001\`
-
-#### Frontend
-
-\`\`\`bash
+### Run Frontend
+```bash
 cd frontend
 npm run dev
-\`\`\`
+```
+→ http://localhost:3000
 
-The frontend will be available at \`http://localhost:3000\`
+---
 
-### Building for Production
+## **Smart Contracts**
 
-#### Backend
-
-\`\`\`bash
-cd backend
-npm run build
-npm start
-\`\`\`
-
-#### Frontend
-
-\`\`\`bash
-cd frontend
-npm run build
-npm start
-\`\`\`
-
-
-**Contract Address (Mainnet):**
-\`\`\`
+**Mainnet Contract Address:**
+```
 0x52c0088C5b910FE40Cb217CF2d3E779113a0007e
-\`\`\`
+```
 
-### Compiling Contracts
-
-\`\`\`bash
+Compile:
+```bash
 cd contracts
 npm run compile
-\`\`\`
+```
 
-### Deploying Contracts
-
-\`\`\`bash
-cd contracts
+Deploy:
+```bash
 npm run deploy
-\`\`\`
-
-See \`DEPLOYMENT.md\` for detailed deployment instructions.
+```
 
 ---
 
-##  Deployment
+## **Deployment**
 
-### Backend Deployment (Render)
+| Component   | Platform | Notes |
+|------------|----------|-------|
+| Backend    | Render   | Add `.env` variables and deploy |
+| Frontend   | Vercel   | Set `NEXT_PUBLIC_API_BASE` and deploy |
+| Contracts  | Hardhat  | Ensure RPC + private key configured |
 
-1. Connect your GitHub repository to Render
-2. Create a new Web Service
-3. Set the root directory to \`backend\`
-4. Configure build and start commands:
-   - Build: \`npm ci && npm run build\`
-   - Start: \`npm start\`
-5. Add environment variables (see Configuration section)
-6. Deploy
-
-For detailed instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
-
-### Frontend Deployment (Vercel)
-
-1. Import your repository in Vercel
-2. Set the root directory to \`frontend\`
-3. Configure environment variables:
-   - \`NEXT_PUBLIC_API_BASE\`: Your backend API URL
-4. Deploy
-
-### Smart Contracts Deployment
-
-1. Configure your \`.env\` file with network credentials
-2. Compile contracts: \`npm run compile\`
-3. Deploy: \`npm run deploy\`
-4. Update contract addresses in backend configuration
+See `DEPLOYMENT.md` for extended guidance.
 
 ---
 
-### Development Scripts
+## **License**
 
-**Backend:**
-\`\`\`bash
-npm run dev      # Start development server with hot reload
-npm run build    # Compile TypeScript to JavaScript
-npm start        # Start production server
-\`\`\`
-
-**Frontend:**
-\`\`\`bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm start        # Start production server
-npm run lint     # Run ESLint
-\`\`\`
-
-**Contracts:**
-\`\`\`bash
-npm run compile  # Compile Solidity contracts
-npm run deploy   # Deploy contracts
-npm test         # Run contract tests
-\`\`\`
-
----
-
-##  License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is distributed under the **MIT License**.  
+See: `LICENSE`
 
 ---
 
 <div align="center">
 
-**Built with 💙 for the decentralized future**
+**Built with 💙 for a decentralized AI future.**
 
 </div>
