@@ -587,14 +587,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-### Resources
-
-- **Documentation**: [See \`/docs\` route in the application]
-- **0G Network Docs**: [https://docs.0g.ai](https://docs.0g.ai)
-- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
-
----
-
 <div align="center">
 
 **Built with 💙 for the decentralized future**
