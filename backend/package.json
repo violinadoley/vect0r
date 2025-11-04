@@ -18,6 +18,9 @@
   ],
   "author": "VectorZero Team",
   "license": "MIT",
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@0glabs/0g-ts-sdk": "^0.3.2",
     "@fastify/cors": "^11.1.0",
@@ -29,7 +32,7 @@
     "axios": "^1.12.2",
     "crypto-js": "^4.2.0",
     "dotenv": "^17.2.3",
-    "ethers": "^6.15.0",
+    "ethers": "6.13.1",
     "fastify": "^5.6.1",
     "fs-extra": "^11.3.2",
     "hnswlib-node": "^3.0.0",
